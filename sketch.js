@@ -39,25 +39,47 @@ let angle = 360/parts;
 let wheel_part = 0;
 let atan_i;
 let n;
+let userAgent = navigator.userAgent;
+let browserName;
+let size_window = true;
 
 // Function to set up every element on the screen and the datetime
 function setup() {
+
+  find_browser();
+
   now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
 
   input_Image = createFileInput(handleFile_Image);
-  input_Image.position(115, 13);
-  // To reduce the button size (standard is to long, with file name)
-  input_Image.size(100);
+  input_Image.position(115, 15);
+  if (browserName == 'safari'){
+    // To reduce the button size (standard is to long, with file name)
+    input_Image.size(100);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
+    input_Image.size(118);
+  } else if (browserName == 'firefox'){
+    input_Image.size(80);
+  }
 
   createCanvas(windowWidth, windowHeight);
 
   button_now = createButton('Reset all points date to now');
-  button_now.size(163,20);
+  if (browserName == 'safari'){
+    button_now.size(163,20);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera'){
+    button_now.size(180,20);
+  } else if (browserName == 'firefox' || browserName == 'No browser detected'){
+    button_now.size(195,20);
+  }
   button_now.position(15, 135);
   button_now.mousePressed(button_now_pressed);
 
   button_export = createButton('Export data');
-  button_export.size(80,20);
+  if (browserName == 'safari'){
+    button_export.size(80,20);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    button_export.size(85,20);
+  }
   button_export.position(15, 75);
   button_export.mousePressed(button_export_pressed);
 
@@ -67,60 +89,116 @@ function setup() {
   inp_export.input(myInputExport);
 
   input_Import = createFileInput(handleFile_Import);
-  input_Import.position(115, 43);
-  input_Import.size(100);
+  input_Import.position(115, 45);
+  if (browserName == 'safari'){
+    input_Import.size(100);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
+    input_Import.size(118);
+  } else if (browserName == 'firefox'){
+    input_Import.size(80);
+  }
 
   button_plus = createButton('+');
   button_plus.size(24,24);
-  button_plus.position((windowWidth/3)*2+200, 12);
+  button_plus.position((windowWidth/3)*2+190, 12);
   button_plus.mousePressed(button_plus_pressed);
 
   button_minus = createButton('-');
   button_minus.size(24,24);
-  button_minus.position((windowWidth/3)*2+230, 12);
+  button_minus.position((windowWidth/3)*2+222, 12);
   button_minus.mousePressed(button_minus_pressed);
 
   button_plus_wheel = createButton('+');
   button_plus_wheel.size(24,24);
-  button_plus_wheel.position((windowWidth/3)*2+225, 132);
+  if (browserName == 'safari'){
+    button_plus_wheel.position((windowWidth/3)*2+223, 132);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    button_plus_wheel.position((windowWidth/3)*2+228, 132);
+  }
   button_plus_wheel.mousePressed(button_plus_wheel_pressed);
 
   button_minus_wheel = createButton('-');
   button_minus_wheel.size(24,24);
-  button_minus_wheel.position((windowWidth/3)*2+255, 132);
+  if (browserName == 'safari'){
+    button_minus_wheel.position((windowWidth/3)*2+255, 132);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    button_minus_wheel.position((windowWidth/3)*2+260, 132);
+  }
   button_minus_wheel.mousePressed(button_minus_wheel_pressed);
 
   inp_rename = createInput('');
-  inp_rename.position((windowWidth/3)*2+134, 73);
-  inp_rename.size(80);
+  inp_rename.position((windowWidth/3)*2+136, 73);
+  inp_rename.size(78);
   inp_rename.input(myInputEvent);
 
   button_rename = createButton('Rename');
-  button_rename.size(60,20);
-  button_rename.position((windowWidth/3)*2+220, 74);
+  if (browserName == 'safari'){
+    button_rename.size(60,20);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    button_rename.size(65,20);
+  }
+  button_rename.position((windowWidth/3)*2+222, 74);
   button_rename.mousePressed(button_rename_pressed);
 
   inp_distance = createInput('');
   inp_distance.position((windowWidth/3)+225, 104);
-  inp_distance.size(60);
+  if (browserName == 'safari'){
+    inp_distance.size(60);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    inp_distance.size(67);
+  }
   inp_distance.input(myInputDistance);
 
   slider_size_point = createSlider(0.5, 5, 1,0.5);
-  slider_size_point.position((windowWidth/3)+95, 137);
+  if (browserName == 'safari'){
+    slider_size_point.position((windowWidth/3)+96, 137);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
+    slider_size_point.position((windowWidth/3)+96, 136);
+  } else if (browserName == 'firefox'){
+    slider_size_point.position((windowWidth/3)+96, 134);
+  }
   slider_size_point.style('width','70px')
 
   button_delete_all = createButton('Delete all points');
-  button_delete_all.size(105,20);
+  if (browserName == 'safari'){
+    button_delete_all.size(105,20);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera'){
+    button_delete_all.size(112,20);
+  } else if (browserName == 'firefox' || browserName == 'No browser detected'){
+    button_delete_all.size(125,20);
+  }
   button_delete_all.position((windowWidth/3)+180, 135);
   button_delete_all.mousePressed(button_delete_all_pressed);
 
 }
 
+// Function find the browser type
+function find_browser(){
+  // Edge and Opera seem to be interpreted as Chrome. Since they do not need any other specification than Chrome, it is not a problem for the moment.
+  // Safari and Chrome and Firefox are checked. Edge and Opera are used as Chrome and are checked in this way too.
+  if (userAgent.match(/chrome|chromium|crios/i)){
+    browserName = 'chrome'
+  } else if (userAgent.match(/safari/i)){
+    browserName = 'safari'
+  } else if (userAgent.match(/firefox|fxios/i)){
+    browserName = 'firefox'
+  } else if (userAgent.match(/opr\//i)){
+    browserName = 'opera'
+  } else if (userAgent.match(/edg/i) || /Edge/.test(navigator.userAgent)){
+    browserName = 'edge'
+  } else {
+    browserName = 'No browser detected'
+    alert('Your browser is not detected. It will be interpreted as Chrome.');
+  }
+}
+
 // Function to set all points datetime to the actual datetime when the corresponding button is clicked
 function button_now_pressed() {
-  now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
-  for (let i = 0; i < points_number; i++){
-    points[i].date = now
+  if (confirm("By clicking on \"ok\", you will reset the date and time of all your points by the actual date and time.")){
+    now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
+    for (let i = 0; i < points_number; i++){
+      points[i].date = now
+    }
   }
 }
 
@@ -145,7 +223,7 @@ function button_export_pressed() {
     let ratio_p_m = inp_distance_value/sqrt(pow(o_x-s_x,2)+pow(o_y-s_y,2));
     let points_meters = Array()
     for (let i = 0; i < points_number; i++){
-      points_meters.push({date: points[i].date, id_: points[i].id_, type: points[i].type, x:(points[i].x-o_x)*ratio_p_m, y:(points[i].y-o_y)*ratio_p_m, imgW:img_final_x, imgH:img_final_y, color:points[i].color, label:points[i].label, direction:points[i].direction})
+      points_meters.push({date: points[i].date, id_: points[i].id_, type: points[i].type, x:(points[i].x-o_x)*ratio_p_m, y:(points[i].y-o_y)*ratio_p_m, imgW:points[i].imgW, imgH:points[i].imgH, color:points[i].color, label:points[i].label, direction:points[i].direction})
     }
     // Information for information recovery
     points_meters.push({labels_number:labels_number,labels_names:labels_names,selected_label:selected_label,selected_label_index:selected_label_index,add_delete:add_delete,change:change,points_number:points_number,id_:id_,selected_point:selected_point,origin_number:origin_number, scale_number:scale_number, o_x:o_x, o_y:o_y, s_x:s_x, s_y:s_y, ratio_p_m:ratio_p_m, parts:parts, wheel_part:wheel_part})
@@ -156,7 +234,7 @@ function button_export_pressed() {
       saveJSON(points_meters,str(inp_export_name)+'.json');
     }
   } else {
-    alert('You cannot export your data now. For more details, see the error below the \"Export data\" button.')
+    alert('You cannot export your data now. \n\nFor more details, see the error written below the \"Export data\" button.')
   }
 }
 
@@ -181,7 +259,7 @@ function button_minus_pressed() {
     }
   }
   if (need_confirm == true){
-    if (confirm("You have points with the label \""+str(labels_names[labels_number-1])+"\". By clicking on \"ok\", you will delete all your points with this label.")){
+    if (confirm("There are points drawn with the label \""+str(labels_names[labels_number-1])+"\". \n\nBy clicking on \"ok\", you will delete all your points with this label.")){
       decrease_labels_number();
     }
   } else {
@@ -189,7 +267,7 @@ function button_minus_pressed() {
   }
 }
 
-// Function to decrease the number of labels, called when during "button_minus_pressed"
+// Function to decrease the number of labels, called during "button_minus_pressed"
 function decrease_labels_number() {
   if (labels_number>1){
     labels_number = labels_number-1;
@@ -207,20 +285,24 @@ function decrease_labels_number() {
 
 // Function to increase the number of wheel parts when the corresponding button is clicked
 function button_plus_wheel_pressed() {
-  parts = parts + 1
+  if (parts < 90){
+    parts = parts + 1
+  }
 }
 
 // Function to decrease the number of wheel parts when the corresponding button is clicked
 function button_minus_wheel_pressed() {
-  parts = parts - 1
+  if (parts > 2){
+      parts = parts - 1
+  }
 }
 
 // Function to manage renaming when the corresponding button is clicked
 function button_rename_pressed() {
   labels_names[selected_label_index] = inp_rename_value
   inp_rename = createInput('');
-  inp_rename.position((windowWidth/3)*2+134, 73);
-  inp_rename.size(80);
+  inp_rename.position((windowWidth/3)*2+136, 73);
+  inp_rename.size(78);
   inp_rename.input(myInputEvent);
   for (let i = 0; i < labels_number; i++){
     if (labels_names[i]==selected_label){
@@ -242,7 +324,7 @@ function myInputDistance() {
   inp_distance_value = this.value()
 }
 
-// Function to select a label when the labels list is clicked
+// Function to select a label when a label is clicked
 function mySelectEvent() {
   for (let i = 0; i < labels_number; i++){
     if (labels_names[i]==selected_label){
@@ -267,7 +349,7 @@ function mouseClicked() {
     // ... for points addition
     if (add_delete == 'add'){
       now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
-      points.push({date: now, id_: id_, type: 'normal', x:mouseX, y:mouseY-165, imgW:img_final_x, imgH:img_final_y, color:c, label:labels_names[selected_label_index], direction:[wheel_part*angle,(wheel_part+1)*angle]})
+      points.push({date: now, id_: id_, type: 'normal', x:mouseX, y:mouseY-165, imgW:img_final_x, imgH:img_final_y, color:c, label:labels_names[selected_label_index], direction:[wheel_part*angle-angle/2,wheel_part*angle+angle/2]})
       points_number = points_number+1
       id_ = id_ + 1
     }
@@ -360,11 +442,11 @@ function mouseClicked() {
       }
       add_delete = 'delete'
     }
-  // ... if mouse is on the 'select' text
-  } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+148) && (mouseY > 15) && (mouseY < 30)){
+  // ... if mouse is on the 'update' text
+} else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
       add_delete = 'select'
-  // ... if mouse is on the 'drag' text
-} else if ((mouseX > (windowWidth/3)+159) && (mouseX < (windowWidth/3)+192) && (mouseY > 15) && (mouseY < 30)){
+  // ... if mouse is on the 'move' text
+} else if ((mouseX > (windowWidth/3)+166) && (mouseX < (windowWidth/3)+203) && (mouseY > 15) && (mouseY < 30)){
       add_delete = 'drag'
   // ... if mouse is on the 'set origin' text
   } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
@@ -407,7 +489,7 @@ function mouseClicked() {
       }
     }
   }
-  // ... if labels clicked
+  // ... if labels is clicked
   if (mouseY > 165 && mouseX > (windowWidth-141) && mouseY < (windowHeight-120)){
     textSize(text_size);
     for (let i = 0; i < labels_number; i++){
@@ -417,13 +499,13 @@ function mouseClicked() {
       }
     }
   }
-  // ... if wheel clicked
+  // ... if wheel is clicked
   if (check_if_in_circle(mouseX,mouseY)){
     find_circle_part(mouseX,mouseY);
     for (let i = 0; i < points_number; i++){
       if (points[i].type == 'selected'){
-        points[i].direction[0] = wheel_part*angle
-        points[i].direction[1] = (wheel_part+1)*angle
+        points[i].direction[0] = wheel_part*angle-angle/2
+        points[i].direction[1] = wheel_part*angle+angle/2
       }
     }
   }
@@ -434,42 +516,64 @@ function find_circle_part(x,y){
   angleMode(DEGREES);
   atan_i = atan((windowHeight-60-y)/(windowWidth-70-x))
   if (parts%2 == 0){
-    n = parts/2
+    n = parts/2+1
+    if (atan_i == -90){
+      wheel_part = int(parts/2)
+    }
+    if (atan_i == 90){
+      wheel_part = 0
+    }
     for (let i = 0; i < n; i++){
-      if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-        if (x > windowWidth-70){
-          wheel_part = i
-        } else {
-          wheel_part = n+i
+      if (i == 0){
+        if (atan_i > -89.99 && atan_i < -90.01+angle/2){
+          if (mouseX > windowWidth-70){
+            wheel_part = i
+          } else {
+            wheel_part = i+(n-1)
+          }
+        }
+      } else if (i == n-1){
+        if (atan_i > -89.99+i*angle-angle/2 && atan_i < 89.99){
+          if (mouseX > windowWidth-70){
+            wheel_part = i
+          } else {
+            wheel_part = 0
+          }
+        }
+      } else {
+        if (atan_i > -89.99+angle/2+(i-1)*angle && atan_i < -90.1+angle/2+i*angle){
+          if (mouseX > windowWidth-70){
+            wheel_part = i
+          } else {
+            wheel_part = i+(n-1)
+          }
         }
       }
     }
   } else {
-    n = int(parts/2)+1
-    if (atan_i == -90){
-      wheel_part = n-1
+    n = int(parts/2+1)
+    if (atan_i == 90){
+      wheel_part = 0
     }
-    if (x > windowWidth-70){
-      for (let i = 0; i < n; i++){
-        if (i == n){
-          if (atan_i > -89.99+i*angle && atan_i < 89.99){
-            wheel_part = i
-          }
-        } else {
-          if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-            wheel_part = i
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < n; i++){
+    for (let i = 0; i < n; i++){
+      if (mouseX > windowWidth-70){
         if (i == 0){
-          if (atan_i > -89.99 && atan_i < -90.01+angle){
-            wheel_part = n-1
+          if (atan_i > -89.99 && atan_i < -90.01+angle/2){
+            wheel_part = i
           }
         } else {
           if (atan_i > -89.99+angle/2+(i-1)*angle && atan_i < -90.01+angle/2+i*angle){
-            wheel_part = n-1+i
+            wheel_part = i
+          }
+        }
+      } else {
+        if (i == n-1){
+          if (atan_i > -89.99+i*angle && atan_i < 89.99){
+            wheel_part = 0
+          }
+        } else {
+          if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
+            wheel_part = i+n
           }
         }
       }
@@ -477,7 +581,7 @@ function find_circle_part(x,y){
   }
 }
 
-// Function to find the closest points for selection or deletion
+// Function to find the closest points for selection, deletion or dragging
 function closest() {
   if (add_delete == 'delete' || add_delete == 'select' || add_delete == 'drag'){
     let x = mouseX
@@ -583,46 +687,53 @@ function handleFile_Image(file) {
   if (file.type === 'image') {
     img = createImg(file.data,'');
     img.hide();
+  } else {
+    alert('Something went wrong. \nThe chosen file type was \"'+str(file.type)+'\".\n\nYou need to add an image type file.');
   }
 }
 
 // Function to handle an imported file
 function handleFile_Import(file) {
-  let file_data = file.data;
-  let save_last = file_data[file_data.length-1];
-  file_data.pop();
-  points = file_data
-  labels_number = int(save_last.labels_number)
-  labels_names = save_last.labels_names
-  selected_label = save_last.selected_label
-  selected_label_index = int(save_last.selected_label_index)
-  add_delete = save_last.add_delete
-  points_number = int(save_last.points_number)
-  id_ = int(save_last.id_)
-  selected_point = int(save_last.selected_point)
-  origin_number = int(save_last.origin_number)
-  scale_number = int(save_last.scale_number)
-  let o_x = float(save_last.o_x);
-  let o_y = float(save_last.o_y);
-  let s_x = float(save_last.s_x);
-  let s_y = float(save_last.s_y);
-  let ratio_p_m = float(save_last.ratio_p_m);
-  for (let i = 0; i < points_number; i++){
-    points[i].id_ = int(points[i].id_)
-    points[i].x = (float(points[i].x)/ratio_p_m)+o_x
-    points[i].y = (float(points[i].y)/ratio_p_m)+o_y
+  if (file.type === 'application') {
+    let file_data = file.data;
+    let save_last = file_data[file_data.length-1];
+    file_data.pop();
+    points = file_data
+    labels_number = int(save_last.labels_number)
+    labels_names = save_last.labels_names
+    selected_label = save_last.selected_label
+    selected_label_index = int(save_last.selected_label_index)
+    add_delete = save_last.add_delete
+    points_number = int(save_last.points_number)
+    id_ = int(save_last.id_)
+    selected_point = int(save_last.selected_point)
+    origin_number = int(save_last.origin_number)
+    scale_number = int(save_last.scale_number)
+    let o_x = float(save_last.o_x);
+    let o_y = float(save_last.o_y);
+    let s_x = float(save_last.s_x);
+    let s_y = float(save_last.s_y);
+    let ratio_p_m = float(save_last.ratio_p_m);
+    for (let i = 0; i < points_number; i++){
+      points[i].id_ = int(points[i].id_)
+      points[i].x = float(points[i].x/ratio_p_m)+o_x
+      points[i].y = float(points[i].y/ratio_p_m)+o_y
+    }
+  } else {
+    alert('Something went wrong. \nThe chosen file type was \"'+str(file.type)+'"\.\n\nYou need to add an application type file.');
   }
 }
 
 // Function to manage mouse mouvements (to detect if a text or a part of the wheel is clickable)
 function mouseMoved() {
+  // ... to select options
   if((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+41) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
   } else if((mouseX > (windowWidth/3)+52) && (mouseX < (windowWidth/3)+95) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
-  } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+148) && (mouseY > 15) && (mouseY < 30)){
+  } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
-  } else if ((mouseX > (windowWidth/3)+159) && (mouseX < (windowWidth/3)+192) && (mouseY > 15) && (mouseY < 30)){
+  } else if ((mouseX > (windowWidth/3)+166) && (mouseX < (windowWidth/3)+203) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
   } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
     cursor(HAND);
@@ -635,53 +746,57 @@ function mouseMoved() {
   } else {
     cursor(ARROW);
   }
+  // ... to select labels
   textSize(text_size);
   for (let i = 0; i < labels_number; i++){
     if ((mouseX > windowWidth-140) && (mouseX < windowWidth) && (mouseY > 166+(text_size*2)*(i+1.25)) && (mouseY < 164+(text_size*2)*(i+2.25))){
       cursor(HAND);
     }
   }
+  // ... to select a part of the wheel
   if (check_if_in_circle(mouseX,mouseY)){
     angleMode(DEGREES);
     atan_i = atan((windowHeight-60-mouseY)/(windowWidth-70-mouseX))
     if (parts%2 == 0){
-      n = parts/2
+      n = parts/2+1
+      if (atan_i == -90){
+        cursor(HAND);
+      }
+      if (atan_i == 90){
+        cursor(HAND);
+      }
       for (let i = 0; i < n; i++){
-        if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-          if (mouseX > windowWidth-70){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
             cursor(HAND);
-          } else {
+          }
+        } else if (i == n-1){
+          if (atan_i > -89.99+i*angle-angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
             cursor(HAND);
           }
         }
       }
     } else {
       n = int(parts/2)+1
-      if (atan_i == -90){
+      if (atan_i == 90){
         cursor(HAND);
       }
-      if (mouseX > windowWidth-70){
-        for (let i = 0; i < n; i++){
-          if (i == n){
-            if (atan_i > -89.99+i*angle && atan_i < 89.99){
-              cursor(HAND);
-            }
-          } else {
-            if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-              cursor(HAND);
-            }
+      for (let i = 0; i < n; i++){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
+            cursor(HAND);
           }
-        }
-      } else {
-        for (let i = 0; i < n; i++){
-          if (i == 0){
-            if (atan_i > -89.99 && atan_i < -90.01+angle){
-              cursor(HAND);
-            }
-          } else {
-            if (atan_i > -89.99+angle/2+(i-1)*angle && atan_i < -90.01+angle/2+i*angle){
-              cursor(HAND);
-            }
+        } else if (i == n-1){
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
+            cursor(HAND);
           }
         }
       }
@@ -758,7 +873,7 @@ function keyPressed(){
   }
 }
 
-// Function to display a warning information if needed
+// Function to display warning information for export if needed
 function missing_alert() {
   if (origin_number == 1){
     missing[0] = 'no'
@@ -846,14 +961,28 @@ function missing_alert() {
 
 // Function to update the position of the buttons, inputs, ...
 function position_update () {
-  button_plus.position((windowWidth/3)*2+200, 12);
-  button_minus.position((windowWidth/3)*2+230, 12);
-  button_plus_wheel.position((windowWidth/3)*2+225, 132);
-  button_minus_wheel.position((windowWidth/3)*2+255, 132);
-  inp_rename.position((windowWidth/3)*2+134, 73);
-  button_rename.position((windowWidth/3)*2+220, 74);
+  button_plus.position((windowWidth/3)*2+190, 12);
+  button_minus.position((windowWidth/3)*2+222, 12);
+  if (browserName == 'safari'){
+    button_plus_wheel.position((windowWidth/3)*2+223, 132);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    button_plus_wheel.position((windowWidth/3)*2+228, 132);
+  }
+  if (browserName == 'safari'){
+    button_minus_wheel.position((windowWidth/3)*2+255, 132);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    button_minus_wheel.position((windowWidth/3)*2+260, 132);
+  }
+  inp_rename.position((windowWidth/3)*2+136, 73);
+  button_rename.position((windowWidth/3)*2+222, 74);
   inp_distance.position((windowWidth/3)+225, 104);
-  slider_size_point.position((windowWidth/3)+95, 137);
+  if (browserName == 'safari'){
+    slider_size_point.position((windowWidth/3)+96, 137);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
+    slider_size_point.position((windowWidth/3)+96, 136);
+  } else if (browserName == 'firefox'){
+    slider_size_point.position((windowWidth/3)+96, 134);
+  }
   button_delete_all.position((windowWidth/3)+180, 135);
 }
 
@@ -869,9 +998,9 @@ function set_label_display_sizes(){
   }
 }
 
-//Not working yet - To prevent unwanted page refreshing
+// Not working yet - Function to prevent unwanted page refreshing
 function pageUnloaded(){
-  confirm("By refreshing the page, you will delete averything.");
+  confirm("By refreshing the page, you will delete everything.");
 }
 
 // Function to manage what will appear on screen
@@ -922,9 +1051,9 @@ function draw() {
 
   // Draws a grey rectangle to avoid points to cross the setting line
   fill(240,240,240);
-  rect(-1,-1,windowWidth+1,166);
+  rect(-1,-1,windowWidth+2,166);
 
-  //Draws a grey rectangle for the labels display part
+  // Draws a grey rectangle for the labels display part
   fill(240,240,240);
   rect(windowWidth-141,165,142,windowHeight-164);
 
@@ -944,7 +1073,11 @@ function draw() {
   fill(0, 0, 0);
   text('Number of labels :', (windowWidth/3)*2+15, 30);
   fill(0, 0, 0);
-  text(labels_number, (windowWidth/3)*2+160, 30);
+  if (labels_number > 9){
+      text(labels_number, (windowWidth/3)*2+156, 30);
+  } else {
+      text(labels_number, (windowWidth/3)*2+160, 30);
+  }
   fill(0, 0, 0);
   text('Selected label :', (windowWidth/3)*2+15, 60);
   fill(colors[selected_label_index][0],colors[selected_label_index][1],colors[selected_label_index][2]);
@@ -954,7 +1087,23 @@ function draw() {
   fill(0,0,0);
   text('Number of wheel parts :', (windowWidth/3)*2+15, 150);
   fill(0,0,0);
-  text(parts, (windowWidth/3)*2+193, 150);
+  if (browserName == 'safari'){
+    if (parts > 99){
+      text(parts, (windowWidth/3)*2+185, 150);
+    } else if (parts > 9 && parts < 100){
+      text(parts, (windowWidth/3)*2+189, 150);
+    } else {
+      text(parts, (windowWidth/3)*2+193, 150);
+    }
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    if (parts > 99){
+      text(parts, (windowWidth/3)*2+188, 150);
+    } else if (parts > 9 && parts < 100){
+      text(parts, (windowWidth/3)*2+192, 150);
+    } else {
+      text(parts, (windowWidth/3)*2+196, 150);
+    }
+  }
   if (add_delete == 'add'){
     fill(0, 204, 0);
     text('Add', (windowWidth/3)+15, 30);
@@ -975,19 +1124,19 @@ function draw() {
   text('|', (windowWidth/3)+99, 30);
   if (add_delete == 'select'){
     fill(204, 204, 0);
-    text('Select', (windowWidth/3)+106, 30);
+    text('Update', (windowWidth/3)+106, 30);
   } else {
     fill(0, 0, 0);
-    text('Select', (windowWidth/3)+106, 30);
+    text('Update', (windowWidth/3)+106, 30);
   }
   fill(0, 0, 0);
-  text('|', (windowWidth/3)+152, 30);
+  text('|', (windowWidth/3)+159, 30);
   if (add_delete == 'drag'){
     fill(153, 153, 0);
-    text('Drag', (windowWidth/3)+159, 30);
+    text('Move', (windowWidth/3)+166, 30);
   } else {
     fill(0, 0, 0);
-    text('Drag', (windowWidth/3)+159, 30);
+    text('Move', (windowWidth/3)+166, 30);
   }
   if (add_delete == 'set_origin'){
     fill(255, 0, 255);
@@ -1042,21 +1191,30 @@ function draw() {
   }
   line(windowWidth-140,165+(text_size*2)*(labels_number+1.25),windowWidth,165+(text_size*2)*(labels_number+1.25));
 
-  // Not working yet - To prevent unwanted page refreshing
-  window.addEventListener('unload',pageUnloaded,false);
-  // Other possibility to prevent unwanted page refreshing
-  // window.onbeforeunload = function() {
-  //  return false;
-  // };
-  // Calculation and drawing for the wheel
+  // Calculates and draws the wheel
   angle = 360/parts;
   angleMode(DEGREES);
   fill(200,200,200);
   ellipse(windowWidth-70,windowHeight-60,100);
   for (let i = 0; i < parts; i++){
-    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90+angle*i),windowHeight-60+50*sin(-90+angle*i));
+    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90-angle/2+angle*i),windowHeight-60+50*sin(-90-angle/2+angle*i));
   }
   for (let i = 0; i < angle; i++){
-    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90+i+angle*wheel_part),windowHeight-60+50*sin(-90+i+angle*wheel_part))
+    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90-angle/2+i+angle*wheel_part),windowHeight-60+50*sin(-90-angle/2+i+angle*wheel_part))
+  }
+
+  // Notifies (only once) the user that the window seems to be too small.
+  if (size_window == true){
+    if (browserName == 'safari'){
+      if (windowWidth < 860 || windowHeight < (295+labels_number*20)){
+        alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
+        size_window = false
+      }
+    } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+      if (windowWidth < 885 || windowHeight < (295+labels_number*20)){
+        alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
+        size_window = false
+      }
+    }
   }
 }
