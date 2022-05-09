@@ -349,7 +349,7 @@ function mouseClicked() {
     // ... for points addition
     if (add_delete == 'add'){
       now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
-      points.push({date: now, id_: id_, type: 'normal', x:mouseX, y:mouseY-165, imgW:img_final_x, imgH:img_final_y, color:c, label:labels_names[selected_label_index], direction:[wheel_part*angle,(wheel_part+1)*angle]})
+      points.push({date: now, id_: id_, type: 'normal', x:mouseX, y:mouseY-165, imgW:img_final_x, imgH:img_final_y, color:c, label:labels_names[selected_label_index], direction:[wheel_part*angle-angle/2,wheel_part*angle+angle/2]})
       points_number = points_number+1
       id_ = id_ + 1
     }
@@ -504,13 +504,8 @@ function mouseClicked() {
     find_circle_part(mouseX,mouseY);
     for (let i = 0; i < points_number; i++){
       if (points[i].type == 'selected'){
-        if (parts %2 == 1 && mouseX < windowWidth-70){
-          points[i].direction[0] = wheel_part*angle-angle/2
-          points[i].direction[1] = wheel_part*angle+angle/2
-        } else {
-          points[i].direction[0] = wheel_part*angle-angle/2
-          points[i].direction[1] = wheel_part*angle+angle/2
-        }
+        points[i].direction[0] = wheel_part*angle-angle/2
+        points[i].direction[1] = wheel_part*angle+angle/2
       }
     }
   }
