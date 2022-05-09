@@ -56,8 +56,10 @@ function setup() {
   if (browserName == 'safari'){
     // To reduce the button size (standard is to long, with file name)
     input_Image.size(100);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
     input_Image.size(118);
+  } else if (browserName == 'firefox'){
+    input_Image.size(80);
   }
 
   createCanvas(windowWidth, windowHeight);
@@ -65,8 +67,10 @@ function setup() {
   button_now = createButton('Reset all points date to now');
   if (browserName == 'safari'){
     button_now.size(163,20);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera'){
     button_now.size(180,20);
+  } else if (browserName == 'firefox' || browserName == 'No browser detected'){
+    button_now.size(195,20);
   }
   button_now.position(15, 135);
   button_now.mousePressed(button_now_pressed);
@@ -74,7 +78,7 @@ function setup() {
   button_export = createButton('Export data');
   if (browserName == 'safari'){
     button_export.size(80,20);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_export.size(85,20);
   }
   button_export.position(15, 75);
@@ -89,8 +93,10 @@ function setup() {
   input_Import.position(115, 43);
   if (browserName == 'safari'){
     input_Import.size(100);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
     input_Import.size(118);
+  } else if (browserName == 'firefox'){
+    input_Import.size(80);
   }
 
   button_plus = createButton('+');
@@ -107,7 +113,7 @@ function setup() {
   button_plus_wheel.size(24,24);
   if (browserName == 'safari'){
     button_plus_wheel.position((windowWidth/3)*2+225, 132);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_plus_wheel.position((windowWidth/3)*2+230, 132);
   }
   button_plus_wheel.mousePressed(button_plus_wheel_pressed);
@@ -116,7 +122,7 @@ function setup() {
   button_minus_wheel.size(24,24);
   if (browserName == 'safari'){
     button_minus_wheel.position((windowWidth/3)*2+255, 132);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_minus_wheel.position((windowWidth/3)*2+260, 132);
   }
   button_minus_wheel.mousePressed(button_minus_wheel_pressed);
@@ -129,7 +135,7 @@ function setup() {
   button_rename = createButton('Rename');
   if (browserName == 'safari'){
     button_rename.size(60,20);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_rename.size(65,20);
   }
   button_rename.position((windowWidth/3)*2+220, 74);
@@ -139,20 +145,26 @@ function setup() {
   inp_distance.position((windowWidth/3)+225, 104);
   if (browserName == 'safari'){
     inp_distance.size(60);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     inp_distance.size(67);
   }
   inp_distance.input(myInputDistance);
 
   slider_size_point = createSlider(0.5, 5, 1,0.5);
-  slider_size_point.position((windowWidth/3)+95, 137);
+  if (browserName == 'safari'){
+    slider_size_point.position((windowWidth/3)+96, 137);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    slider_size_point.position((windowWidth/3)+96, 136);
+  }
   slider_size_point.style('width','70px')
 
   button_delete_all = createButton('Delete all points');
   if (browserName == 'safari'){
     button_delete_all.size(105,20);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera'){
     button_delete_all.size(112,20);
+  } else if (browserName == 'firefox' || browserName == 'No browser detected'){
+    button_delete_all.size(125,20);
   }
   button_delete_all.position((windowWidth/3)+180, 135);
   button_delete_all.mousePressed(button_delete_all_pressed);
@@ -161,17 +173,17 @@ function setup() {
 
 // Function find the browser type
 function find_browser(){
-  // Edge seems to be interpreted as Chrome. Since it doesn't need any other specification than Chrome, it is not a problem for the moment.
-  // Safari and Chrome are checked. Edge is used as Chrome. Firefox and Opera are not supported yet.
+  // Edge and Opera seem to be interpreted as Chrome. Since they do not need any other specification than Chrome, it is not a problem for the moment.
+  // Safari and Chrome are checked. Edge and Opera are used as Chrome. Firefox is not fully supported yet.
   if (userAgent.match(/chrome|chromium|crios/i)){
     browserName = 'chrome'
   } else if (userAgent.match(/safari/i)){
     browserName = 'safari'
-  } /*else if (userAgent.match(/firefox|fxios/i)){
+  } else if (userAgent.match(/firefox|fxios/i)){
     browserName = 'firefox'
   } else if (userAgent.match(/opr\//i)){
     browserName = 'opera'
-  } */else if (userAgent.match(/edg/i) || /Edge/.test(navigator.userAgent)){
+  } else if (userAgent.match(/edg/i) || /Edge/.test(navigator.userAgent)){
     browserName = 'edge'
   } else {
     browserName = 'No browser detected'
@@ -921,18 +933,22 @@ function position_update () {
   button_minus.position((windowWidth/3)*2+230, 12);
   if (browserName == 'safari'){
     button_plus_wheel.position((windowWidth/3)*2+225, 132);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_plus_wheel.position((windowWidth/3)*2+230, 132);
   }
   if (browserName == 'safari'){
     button_minus_wheel.position((windowWidth/3)*2+255, 132);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_minus_wheel.position((windowWidth/3)*2+260, 132);
   }
   inp_rename.position((windowWidth/3)*2+134, 73);
   button_rename.position((windowWidth/3)*2+220, 74);
   inp_distance.position((windowWidth/3)+225, 104);
-  slider_size_point.position((windowWidth/3)+95, 137);
+  if (browserName == 'safari'){
+    slider_size_point.position((windowWidth/3)+96, 137);
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+    slider_size_point.position((windowWidth/3)+96, 136);
+  }
   button_delete_all.position((windowWidth/3)+180, 135);
 }
 
@@ -1035,7 +1051,7 @@ function draw() {
   fill(0,0,0);
   if (browserName == 'safari'){
     text(parts, (windowWidth/3)*2+193, 150);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     text(parts, (windowWidth/3)*2+196, 150);
   }
   if (add_delete == 'add'){
@@ -1144,8 +1160,8 @@ function draw() {
         alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
         size_window = false
       }
-    } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'No browser detected'){
-      if (windowWidth < 875 || windowHeight < (295+labels_number*20)){
+    } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+      if (windowWidth < 885 || windowHeight < (295+labels_number*20)){
         alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
         size_window = false
       }
