@@ -41,7 +41,6 @@ let atan_i;
 let n;
 
 
-
 // Function to set up every element on the screen and the datetime
 function setup() {
   now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
