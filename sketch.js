@@ -47,7 +47,6 @@ let size_window = true;
 function setup() {
 
   find_browser();
-  console.log(browserName);
 
   now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
 
@@ -101,20 +100,20 @@ function setup() {
 
   button_plus = createButton('+');
   button_plus.size(24,24);
-  button_plus.position((windowWidth/3)*2+200, 12);
+  button_plus.position((windowWidth/3)*2+190, 12);
   button_plus.mousePressed(button_plus_pressed);
 
   button_minus = createButton('-');
   button_minus.size(24,24);
-  button_minus.position((windowWidth/3)*2+230, 12);
+  button_minus.position((windowWidth/3)*2+222, 12);
   button_minus.mousePressed(button_minus_pressed);
 
   button_plus_wheel = createButton('+');
   button_plus_wheel.size(24,24);
   if (browserName == 'safari'){
-    button_plus_wheel.position((windowWidth/3)*2+225, 132);
+    button_plus_wheel.position((windowWidth/3)*2+223, 132);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
-    button_plus_wheel.position((windowWidth/3)*2+230, 132);
+    button_plus_wheel.position((windowWidth/3)*2+228, 132);
   }
   button_plus_wheel.mousePressed(button_plus_wheel_pressed);
 
@@ -128,8 +127,8 @@ function setup() {
   button_minus_wheel.mousePressed(button_minus_wheel_pressed);
 
   inp_rename = createInput('');
-  inp_rename.position((windowWidth/3)*2+134, 73);
-  inp_rename.size(80);
+  inp_rename.position((windowWidth/3)*2+136, 73);
+  inp_rename.size(78);
   inp_rename.input(myInputEvent);
 
   button_rename = createButton('Rename');
@@ -138,7 +137,7 @@ function setup() {
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_rename.size(65,20);
   }
-  button_rename.position((windowWidth/3)*2+220, 74);
+  button_rename.position((windowWidth/3)*2+222, 74);
   button_rename.mousePressed(button_rename_pressed);
 
   inp_distance = createInput('');
@@ -176,7 +175,7 @@ function setup() {
 // Function find the browser type
 function find_browser(){
   // Edge and Opera seem to be interpreted as Chrome. Since they do not need any other specification than Chrome, it is not a problem for the moment.
-  // Safari and Chrome and Firefox are checked. Edge and Opera are used as Chrome.
+  // Safari and Chrome and Firefox are checked. Edge and Opera are used as Chrome and are checked in this way too.
   if (userAgent.match(/chrome|chromium|crios/i)){
     browserName = 'chrome'
   } else if (userAgent.match(/safari/i)){
@@ -286,20 +285,24 @@ function decrease_labels_number() {
 
 // Function to increase the number of wheel parts when the corresponding button is clicked
 function button_plus_wheel_pressed() {
-  parts = parts + 1
+  if (parts < 90){
+    parts = parts + 1
+  }
 }
 
 // Function to decrease the number of wheel parts when the corresponding button is clicked
 function button_minus_wheel_pressed() {
-  parts = parts - 1
+  if (parts > 2){
+      parts = parts - 1
+  }
 }
 
 // Function to manage renaming when the corresponding button is clicked
 function button_rename_pressed() {
   labels_names[selected_label_index] = inp_rename_value
   inp_rename = createInput('');
-  inp_rename.position((windowWidth/3)*2+134, 73);
-  inp_rename.size(80);
+  inp_rename.position((windowWidth/3)*2+136, 73);
+  inp_rename.size(78);
   inp_rename.input(myInputEvent);
   for (let i = 0; i < labels_number; i++){
     if (labels_names[i]==selected_label){
@@ -501,8 +504,13 @@ function mouseClicked() {
     find_circle_part(mouseX,mouseY);
     for (let i = 0; i < points_number; i++){
       if (points[i].type == 'selected'){
-        points[i].direction[0] = wheel_part*angle
-        points[i].direction[1] = (wheel_part+1)*angle
+        if (parts %2 == 1 && mouseX < windowWidth-70){
+          points[i].direction[0] = wheel_part*angle-angle/2
+          points[i].direction[1] = wheel_part*angle+angle/2
+        } else {
+          points[i].direction[0] = wheel_part*angle-angle/2
+          points[i].direction[1] = wheel_part*angle+angle/2
+        }
       }
     }
   }
@@ -513,42 +521,64 @@ function find_circle_part(x,y){
   angleMode(DEGREES);
   atan_i = atan((windowHeight-60-y)/(windowWidth-70-x))
   if (parts%2 == 0){
-    n = parts/2
+    n = parts/2+1
+    if (atan_i == -90){
+      wheel_part = int(parts/2)
+    }
+    if (atan_i == 90){
+      wheel_part = 0
+    }
     for (let i = 0; i < n; i++){
-      if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-        if (x > windowWidth-70){
-          wheel_part = i
-        } else {
-          wheel_part = n+i
+      if (i == 0){
+        if (atan_i > -89.99 && atan_i < -90.01+angle/2){
+          if (mouseX > windowWidth-70){
+            wheel_part = i
+          } else {
+            wheel_part = i+(n-1)
+          }
+        }
+      } else if (i == n-1){
+        if (atan_i > -89.99+i*angle-angle/2 && atan_i < 89.99){
+          if (mouseX > windowWidth-70){
+            wheel_part = i
+          } else {
+            wheel_part = 0
+          }
+        }
+      } else {
+        if (atan_i > -89.99+angle/2+(i-1)*angle && atan_i < -90.1+angle/2+i*angle){
+          if (mouseX > windowWidth-70){
+            wheel_part = i
+          } else {
+            wheel_part = i+(n-1)
+          }
         }
       }
     }
   } else {
-    n = int(parts/2)+1
-    if (atan_i == -90){
-      wheel_part = n-1
+    n = int(parts/2+1)
+    if (atan_i == 90){
+      wheel_part = 0
     }
-    if (x > windowWidth-70){
-      for (let i = 0; i < n; i++){
-        if (i == n){
-          if (atan_i > -89.99+i*angle && atan_i < 89.99){
-            wheel_part = i
-          }
-        } else {
-          if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-            wheel_part = i
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < n; i++){
+    for (let i = 0; i < n; i++){
+      if (mouseX > windowWidth-70){
         if (i == 0){
-          if (atan_i > -89.99 && atan_i < -90.01+angle){
-            wheel_part = n-1
+          if (atan_i > -89.99 && atan_i < -90.01+angle/2){
+            wheel_part = i
           }
         } else {
           if (atan_i > -89.99+angle/2+(i-1)*angle && atan_i < -90.01+angle/2+i*angle){
-            wheel_part = n-1+i
+            wheel_part = i
+          }
+        }
+      } else {
+        if (i == n-1){
+          if (atan_i > -89.99+i*angle && atan_i < 89.99){
+            wheel_part = 0
+          }
+        } else {
+          if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
+            wheel_part = i+n
           }
         }
       }
@@ -701,6 +731,7 @@ function handleFile_Import(file) {
 
 // Function to manage mouse mouvements (to detect if a text or a part of the wheel is clickable)
 function mouseMoved() {
+  // ... to select options
   if((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+41) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
   } else if((mouseX > (windowWidth/3)+52) && (mouseX < (windowWidth/3)+95) && (mouseY > 15) && (mouseY < 30)){
@@ -720,53 +751,57 @@ function mouseMoved() {
   } else {
     cursor(ARROW);
   }
+  // ... to select labels
   textSize(text_size);
   for (let i = 0; i < labels_number; i++){
     if ((mouseX > windowWidth-140) && (mouseX < windowWidth) && (mouseY > 166+(text_size*2)*(i+1.25)) && (mouseY < 164+(text_size*2)*(i+2.25))){
       cursor(HAND);
     }
   }
+  // ... to select a part of the wheel
   if (check_if_in_circle(mouseX,mouseY)){
     angleMode(DEGREES);
     atan_i = atan((windowHeight-60-mouseY)/(windowWidth-70-mouseX))
     if (parts%2 == 0){
-      n = parts/2
+      n = parts/2+1
+      if (atan_i == -90){
+        cursor(HAND);
+      }
+      if (atan_i == 90){
+        cursor(HAND);
+      }
       for (let i = 0; i < n; i++){
-        if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-          if (mouseX > windowWidth-70){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
             cursor(HAND);
-          } else {
+          }
+        } else if (i == n-1){
+          if (atan_i > -89.99+i*angle-angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
             cursor(HAND);
           }
         }
       }
     } else {
       n = int(parts/2)+1
-      if (atan_i == -90){
+      if (atan_i == 90){
         cursor(HAND);
       }
-      if (mouseX > windowWidth-70){
-        for (let i = 0; i < n; i++){
-          if (i == n){
-            if (atan_i > -89.99+i*angle && atan_i < 89.99){
-              cursor(HAND);
-            }
-          } else {
-            if (atan_i > -89.99+i*angle && atan_i < -90.01+(i+1)*angle){
-              cursor(HAND);
-            }
+      for (let i = 0; i < n; i++){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
+            cursor(HAND);
           }
-        }
-      } else {
-        for (let i = 0; i < n; i++){
-          if (i == 0){
-            if (atan_i > -89.99 && atan_i < -90.01+angle){
-              cursor(HAND);
-            }
-          } else {
-            if (atan_i > -89.99+angle/2+(i-1)*angle && atan_i < -90.01+angle/2+i*angle){
-              cursor(HAND);
-            }
+        } else if (i == n-1){
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
+            cursor(HAND);
           }
         }
       }
@@ -931,20 +966,20 @@ function missing_alert() {
 
 // Function to update the position of the buttons, inputs, ...
 function position_update () {
-  button_plus.position((windowWidth/3)*2+200, 12);
-  button_minus.position((windowWidth/3)*2+230, 12);
+  button_plus.position((windowWidth/3)*2+190, 12);
+  button_minus.position((windowWidth/3)*2+222, 12);
   if (browserName == 'safari'){
-    button_plus_wheel.position((windowWidth/3)*2+225, 132);
+    button_plus_wheel.position((windowWidth/3)*2+223, 132);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
-    button_plus_wheel.position((windowWidth/3)*2+230, 132);
+    button_plus_wheel.position((windowWidth/3)*2+228, 132);
   }
   if (browserName == 'safari'){
     button_minus_wheel.position((windowWidth/3)*2+255, 132);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
     button_minus_wheel.position((windowWidth/3)*2+260, 132);
   }
-  inp_rename.position((windowWidth/3)*2+134, 73);
-  button_rename.position((windowWidth/3)*2+220, 74);
+  inp_rename.position((windowWidth/3)*2+136, 73);
+  button_rename.position((windowWidth/3)*2+222, 74);
   inp_distance.position((windowWidth/3)+225, 104);
   if (browserName == 'safari'){
     slider_size_point.position((windowWidth/3)+96, 137);
@@ -1023,7 +1058,7 @@ function draw() {
   fill(240,240,240);
   rect(-1,-1,windowWidth+2,166);
 
-  //Draws a grey rectangle for the labels display part
+  // Draws a grey rectangle for the labels display part
   fill(240,240,240);
   rect(windowWidth-141,165,142,windowHeight-164);
 
@@ -1043,7 +1078,11 @@ function draw() {
   fill(0, 0, 0);
   text('Number of labels :', (windowWidth/3)*2+15, 30);
   fill(0, 0, 0);
-  text(labels_number, (windowWidth/3)*2+160, 30);
+  if (labels_number > 9){
+      text(labels_number, (windowWidth/3)*2+156, 30);
+  } else {
+      text(labels_number, (windowWidth/3)*2+160, 30);
+  }
   fill(0, 0, 0);
   text('Selected label :', (windowWidth/3)*2+15, 60);
   fill(colors[selected_label_index][0],colors[selected_label_index][1],colors[selected_label_index][2]);
@@ -1054,9 +1093,21 @@ function draw() {
   text('Number of wheel parts :', (windowWidth/3)*2+15, 150);
   fill(0,0,0);
   if (browserName == 'safari'){
-    text(parts, (windowWidth/3)*2+193, 150);
+    if (parts > 99){
+      text(parts, (windowWidth/3)*2+185, 150);
+    } else if (parts > 9 && parts < 100){
+      text(parts, (windowWidth/3)*2+189, 150);
+    } else {
+      text(parts, (windowWidth/3)*2+193, 150);
+    }
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
-    text(parts, (windowWidth/3)*2+196, 150);
+    if (parts > 99){
+      text(parts, (windowWidth/3)*2+188, 150);
+    } else if (parts > 9 && parts < 100){
+      text(parts, (windowWidth/3)*2+192, 150);
+    } else {
+      text(parts, (windowWidth/3)*2+196, 150);
+    }
   }
   if (add_delete == 'add'){
     fill(0, 204, 0);
@@ -1145,16 +1196,16 @@ function draw() {
   }
   line(windowWidth-140,165+(text_size*2)*(labels_number+1.25),windowWidth,165+(text_size*2)*(labels_number+1.25));
 
-  // Calculation and drawing for the wheel
+  // Calculates and draws the wheel
   angle = 360/parts;
   angleMode(DEGREES);
   fill(200,200,200);
   ellipse(windowWidth-70,windowHeight-60,100);
   for (let i = 0; i < parts; i++){
-    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90+angle*i),windowHeight-60+50*sin(-90+angle*i));
+    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90-angle/2+angle*i),windowHeight-60+50*sin(-90-angle/2+angle*i));
   }
   for (let i = 0; i < angle; i++){
-    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90+i+angle*wheel_part),windowHeight-60+50*sin(-90+i+angle*wheel_part))
+    line(windowWidth-70,windowHeight-60,windowWidth-70+50*cos(-90-angle/2+i+angle*wheel_part),windowHeight-60+50*sin(-90-angle/2+i+angle*wheel_part))
   }
 
   // Notifies (only once) the user that the window seems to be too small.
