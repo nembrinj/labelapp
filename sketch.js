@@ -52,7 +52,7 @@ function setup() {
   now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
 
   input_Image = createFileInput(handleFile_Image);
-  input_Image.position(115, 13);
+  input_Image.position(115, 15);
   if (browserName == 'safari'){
     // To reduce the button size (standard is to long, with file name)
     input_Image.size(100);
@@ -90,7 +90,7 @@ function setup() {
   inp_export.input(myInputExport);
 
   input_Import = createFileInput(handleFile_Import);
-  input_Import.position(115, 43);
+  input_Import.position(115, 45);
   if (browserName == 'safari'){
     input_Import.size(100);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
@@ -153,8 +153,10 @@ function setup() {
   slider_size_point = createSlider(0.5, 5, 1,0.5);
   if (browserName == 'safari'){
     slider_size_point.position((windowWidth/3)+96, 137);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
     slider_size_point.position((windowWidth/3)+96, 136);
+  } else if (browserName == 'firefox'){
+    slider_size_point.position((windowWidth/3)+96, 134);
   }
   slider_size_point.style('width','70px')
 
@@ -174,7 +176,7 @@ function setup() {
 // Function find the browser type
 function find_browser(){
   // Edge and Opera seem to be interpreted as Chrome. Since they do not need any other specification than Chrome, it is not a problem for the moment.
-  // Safari and Chrome are checked. Edge and Opera are used as Chrome. Firefox is not fully supported yet.
+  // Safari and Chrome and Firefox are checked. Edge and Opera are used as Chrome.
   if (userAgent.match(/chrome|chromium|crios/i)){
     browserName = 'chrome'
   } else if (userAgent.match(/safari/i)){
@@ -946,8 +948,10 @@ function position_update () {
   inp_distance.position((windowWidth/3)+225, 104);
   if (browserName == 'safari'){
     slider_size_point.position((windowWidth/3)+96, 137);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
     slider_size_point.position((windowWidth/3)+96, 136);
+  } else if (browserName == 'firefox'){
+    slider_size_point.position((windowWidth/3)+96, 134);
   }
   button_delete_all.position((windowWidth/3)+180, 135);
 }
