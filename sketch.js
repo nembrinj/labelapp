@@ -1,3 +1,9 @@
+/**
+ * @file Webapp for labeling.
+ * @author Feller Maxence
+ * @version 6.0
+ */
+
 // Variables initialization
 let input_Image;
 let img;
@@ -43,7 +49,10 @@ let userAgent = navigator.userAgent;
 let browserName;
 let size_window = true;
 
-// Function to set up every element on the screen and the datetime
+/**
+ * Function to set up every element on the screen and the datetime
+ * @function
+ */
 function setup() {
 
   find_browser();
@@ -147,7 +156,7 @@ function setup() {
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
     inp_distance.size(67);
   } else if (browserName == 'firefox'){
-    inp_distance.size(77);
+    inp_distance.size(80);
   }
   inp_distance.input(myInputDistance);
 
@@ -174,7 +183,10 @@ function setup() {
 
 }
 
-// Function find the browser type
+/**
+ * Function find the browser type
+ * @function
+ */
 function find_browser(){
   // Edge and Opera seem to be interpreted as Chrome. Since they do not need any other specification than Chrome, it is not a problem for the moment.
   // Safari and Chrome and Firefox are checked. Edge and Opera are used as Chrome and are checked in this way too.
@@ -194,7 +206,10 @@ function find_browser(){
   }
 }
 
-// Function to set all points datetime to the actual datetime when the corresponding button is clicked
+/**
+ * Function to set all points datetime to the actual datetime when the corresponding button is clicked
+ * @function
+ */
 function button_now_pressed() {
   if (confirm("By clicking on \"ok\", you will reset the date and time of all your points by the actual date and time.")){
     now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
@@ -204,7 +219,10 @@ function button_now_pressed() {
   }
 }
 
-// Function to export an information file when the corresponding button is clicked
+/**
+ * Function to export an information file when the corresponding button is clicked
+ * @function
+ */
 function button_export_pressed() {
   if (missing[0] == 'no' && missing[1] == 'no' && missing[2] == 'no'){
     now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
@@ -240,19 +258,28 @@ function button_export_pressed() {
   }
 }
 
-// Function to take into account the input for the name of the exported file
+/**
+ * Function to take into account the input for the name of the exported file
+ * @function
+ */
 function myInputExport() {
   inp_export_name = this.value()
 }
 
-// Function to increase the number of labels when the corresponding button is clicked
+/**
+ * Function to increase the number of labels when the corresponding button is clicked
+ * @function
+ */
 function button_plus_pressed() {
   if (labels_number<20){
     labels_number = labels_number+1;
   }
 }
 
-// Function to decrease the number of labels when the corresponding button is clicked
+/**
+ * Function to decrease the number of labels when the corresponding button is clicked
+ * @function
+ */
 function button_minus_pressed() {
   let need_confirm = false;
   for (let i = 0; i < points_number; i++){
@@ -269,7 +296,10 @@ function button_minus_pressed() {
   }
 }
 
-// Function to decrease the number of labels, called during "button_minus_pressed"
+/**
+ * Function to decrease the number of labels, called during "button_minus_pressed"
+ * @function
+ */
 function decrease_labels_number() {
   if (labels_number>1){
     labels_number = labels_number-1;
@@ -285,21 +315,30 @@ function decrease_labels_number() {
   }
 }
 
-// Function to increase the number of wheel parts when the corresponding button is clicked
+/**
+ * Function to increase the number of wheel parts when the corresponding button is clicked
+ * @function
+ */
 function button_plus_wheel_pressed() {
   if (parts < 90){
     parts = parts + 1
   }
 }
 
-// Function to decrease the number of wheel parts when the corresponding button is clicked
+/**
+ * Function to decrease the number of wheel parts when the corresponding button is clicked
+ * @function
+ */
 function button_minus_wheel_pressed() {
   if (parts > 2){
       parts = parts - 1
   }
 }
 
-// Function to manage renaming when the corresponding button is clicked
+/**
+ * Function to manage renaming when the corresponding button is clicked
+ * @function
+ */
 function button_rename_pressed() {
   labels_names[selected_label_index] = inp_rename_value
   inp_rename = createInput('');
@@ -321,12 +360,18 @@ function button_rename_pressed() {
   selected_label = labels_names[selected_label_index]
 }
 
-// Function to take into account the input for the scale point distance
+/**
+ * Function to take into account the input for the scale point distance
+ * @function
+ */
 function myInputDistance() {
   inp_distance_value = this.value()
 }
 
-// Function to select a label when a label is clicked
+/**
+ * Function to select a label when a label is clicked
+ * @function
+ */
 function mySelectEvent() {
   for (let i = 0; i < labels_number; i++){
     if (labels_names[i]==selected_label){
@@ -343,7 +388,10 @@ function mySelectEvent() {
   }
 }
 
-// Function to manage mouse clicked
+/**
+ * Function to manage mouse clicked
+ * @function
+ */
 function mouseClicked() {
   // Listener added in case someone clicked on something, to prevent losing data
   // It is important to add it after the user made an action, here the click, otherwise no warning will be made.
@@ -519,7 +567,12 @@ function mouseClicked() {
   }
 }
 
-// Function to find which part of the wheel is clicked
+/**
+ * Function to find which part of the wheel is clicked
+ * @function
+ * @param {number} x - The x coordinate of the mouse when clicked
+ * @param {number} y - The y coordinate of the mouse when clicked
+ */
 function find_circle_part(x,y){
   angleMode(DEGREES);
   atan_i = atan((windowHeight-60-y)/(windowWidth-70-x))
@@ -589,7 +642,10 @@ function find_circle_part(x,y){
   }
 }
 
-// Function to find the closest points for selection, deletion or dragging
+/**
+ * Function to find the closest points for selection, deletion or dragging
+ * @function
+ */
 function closest() {
   if (add_delete == 'delete' || add_delete == 'select' || add_delete == 'drag'){
     let x = mouseX
@@ -628,12 +684,18 @@ function closest() {
   }
 }
 
-// Function to take into account the input for renaming labels
+/**
+ * Function to take into account the input for renaming labels
+ * @function
+ */
 function myInputEvent() {
   inp_rename_value = this.value()
 }
 
-// Function to delete all points
+/**
+ * Function to delete all points
+ * @function
+ */
 function button_delete_all_pressed() {
   if (confirm("By clicking on \"ok\", you will delete all your points.")){
     points = Array()
@@ -644,7 +706,11 @@ function button_delete_all_pressed() {
   }
 }
 
-// Function to draw points
+/**
+ * Function to draw points
+ * @function
+ * @param {Object} pt - The point to be drawn
+ */
 function drawpoint(pt) {
   size_point = slider_size_point.value();
   fill(pt.color)
@@ -690,8 +756,13 @@ function drawpoint(pt) {
   }
 }
 
-// Function to handle an imported image (= map)
+/**
+ * Function to handle an imported image (= map)
+ * @function
+ * @param {object} file - The image file to create the map
+ */
 function handleFile_Image(file) {
+  console.log(typeof(file));
   if (file.type === 'image') {
     img = createImg(file.data,'');
     img.hide();
@@ -700,7 +771,11 @@ function handleFile_Image(file) {
   }
 }
 
-// Function to handle an imported file
+/**
+ * Function to handle an imported file
+ * @function
+ * @param {object} file - The importation file
+ */
 function handleFile_Import(file) {
   if (file.type === 'application') {
     let file_data = file.data;
@@ -737,7 +812,10 @@ function handleFile_Import(file) {
   }
 }
 
-// Function to manage mouse mouvements (to detect if a text or a part of the wheel is clickable)
+/**
+ * Function to manage mouse mouvements (to detect if a text or a part of the wheel is clickable)
+ * @function
+ */
 function mouseMoved() {
   // ... to select options
   if((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+41) && (mouseY > 15) && (mouseY < 30)){
@@ -817,14 +895,20 @@ function mouseMoved() {
   }
 }
 
-// Function to detect if the mouse is dragged
+/**
+ * Function to detect if the mouse is dragged
+ * @function
+ */
 function mouseDragged() {
   if (add_delete == 'drag' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y){
     drag_closest();
   }
 }
 
-// Function to drag the closest point
+/**
+ * Function to drag the closest point
+ * @function
+ */
 function drag_closest(){
   closest();
   for (let i = 0; i < points_number; i++){
@@ -836,14 +920,23 @@ function drag_closest(){
   }
 }
 
-// Function to check if a set of coordinates is in the wheel
+/**
+ * Function to check if a set of coordinates is in the wheel
+ * @function
+ * @param {number} x - The x coordinate of the mouse when moved
+ * @param {number} y - The y coordinate of the mouse when moved
+ * @returns {boolean}
+*/
 function check_if_in_circle(x,y){
   if (pow(x-(windowWidth-70),2)+pow(y-(windowHeight-60),2)<pow(50,2)){
     return true;
   }
 }
 
-// Function to manage keys pressed
+/**
+ * Function to manage keys pressed
+ * @function
+ */
 function keyPressed(){
   // ... if a point is selected (to reposition it)
   if (add_delete == 'select'){
@@ -886,7 +979,10 @@ function keyPressed(){
   }
 }
 
-// Function to display warning information for export if needed
+/**
+ * Function to display warning information for export if needed
+ * @function
+ */
 function missing_alert() {
   if (origin_number == 1){
     missing[0] = 'no'
@@ -972,7 +1068,10 @@ function missing_alert() {
   }
 }
 
-// Function to update the position of the buttons, inputs, ...
+/**
+ * Function to update the position of the buttons, inputs, ...
+ * @function
+ */
 function position_update () {
   button_plus.position((windowWidth/3)*2+190, 12);
   button_minus.position((windowWidth/3)*2+222, 12);
@@ -999,7 +1098,10 @@ function position_update () {
   button_delete_all.position((windowWidth/3)+180, 135);
 }
 
-// Function to resize the text size for the labels display
+/**
+ * Function to resize the text size for the labels display
+ * @function
+ */
 function set_label_display_sizes(){
   let area_labels = windowHeight-165-120; //-120 corresponds to the wheel area
   if (area_labels < text_size*((labels_number+1)*2+1)){
@@ -1011,7 +1113,10 @@ function set_label_display_sizes(){
   }
 }
 
-// Function to manage what will appear on screen
+/**
+ * Function to manage what will appear on screen
+ * @function
+ */
 function draw() {
 
   // Resizes the canvas
