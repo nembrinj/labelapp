@@ -144,8 +144,10 @@ function setup() {
   inp_distance.position((windowWidth/3)+225, 104);
   if (browserName == 'safari'){
     inp_distance.size(60);
-  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
+  } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
     inp_distance.size(67);
+  } else if (browserName == 'firefox'){
+    inp_distance.size(79);
   }
   inp_distance.input(myInputDistance);
 
@@ -343,6 +345,12 @@ function mySelectEvent() {
 
 // Function to manage mouse clicked
 function mouseClicked() {
+  // Listener added in case someone clicked on something, to prevent losing data
+  // It is important to add it after the user made an action, here the click, otherwise no warning will be made.
+  window.addEventListener('beforeunload', (event) => {
+    event.returnValue = 'Are you sure you want to leave?';
+  });
+
   let c = colors[selected_label_index]
   // ... if mouse is in the drawing area
   if (mouseY > 165 && mouseX < (windowWidth-140)){
@@ -697,27 +705,32 @@ function handleFile_Import(file) {
   if (file.type === 'application') {
     let file_data = file.data;
     let save_last = file_data[file_data.length-1];
-    file_data.pop();
-    points = file_data
-    labels_number = int(save_last.labels_number)
-    labels_names = save_last.labels_names
-    selected_label = save_last.selected_label
-    selected_label_index = int(save_last.selected_label_index)
-    add_delete = save_last.add_delete
-    points_number = int(save_last.points_number)
-    id_ = int(save_last.id_)
-    selected_point = int(save_last.selected_point)
-    origin_number = int(save_last.origin_number)
-    scale_number = int(save_last.scale_number)
-    let o_x = float(save_last.o_x);
-    let o_y = float(save_last.o_y);
-    let s_x = float(save_last.s_x);
-    let s_y = float(save_last.s_y);
-    let ratio_p_m = float(save_last.ratio_p_m);
-    for (let i = 0; i < points_number; i++){
-      points[i].id_ = int(points[i].id_)
-      points[i].x = float(points[i].x/ratio_p_m)+o_x
-      points[i].y = float(points[i].y/ratio_p_m)+o_y
+    // Check the first saved variable and the x value of the first saved point to determine if the file content seems to be fine.
+    if (isNaN(save_last.labels_number)|isNaN(file_data[0].x)){
+      alert('Something went wrong. \nThe file content does not correspond to the content needed. \n\nPlease check your file and try again.');
+    } else {
+      file_data.pop();
+      points = file_data
+      labels_number = int(save_last.labels_number)
+      labels_names = save_last.labels_names
+      selected_label = save_last.selected_label
+      selected_label_index = int(save_last.selected_label_index)
+      add_delete = save_last.add_delete
+      points_number = int(save_last.points_number)
+      id_ = int(save_last.id_)
+      selected_point = int(save_last.selected_point)
+      origin_number = int(save_last.origin_number)
+      scale_number = int(save_last.scale_number)
+      let o_x = float(save_last.o_x);
+      let o_y = float(save_last.o_y);
+      let s_x = float(save_last.s_x);
+      let s_y = float(save_last.s_y);
+      let ratio_p_m = float(save_last.ratio_p_m);
+      for (let i = 0; i < points_number; i++){
+        points[i].id_ = int(points[i].id_)
+        points[i].x = float(points[i].x/ratio_p_m)+o_x
+        points[i].y = float(points[i].y/ratio_p_m)+o_y
+      }
     }
   } else {
     alert('Something went wrong. \nThe chosen file type was \"'+str(file.type)+'"\.\n\nYou need to add an application type file.');
@@ -988,7 +1001,7 @@ function position_update () {
 
 // Function to resize the text size for the labels display
 function set_label_display_sizes(){
-  let area_labels = windowHeight-165-120; //-120 corresponds to the direction selection area
+  let area_labels = windowHeight-165-120; //-120 corresponds to the wheel area
   if (area_labels < text_size*((labels_number+1)*2+1)){
     text_size = text_size-0.25
     set_label_display_sizes();
@@ -996,11 +1009,6 @@ function set_label_display_sizes(){
     text_size = text_size+0.25
     set_label_display_sizes();
   }
-}
-
-// Not working yet - Function to prevent unwanted page refreshing
-function pageUnloaded(){
-  confirm("By refreshing the page, you will delete everything.");
 }
 
 // Function to manage what will appear on screen
