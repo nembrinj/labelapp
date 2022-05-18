@@ -20,14 +20,14 @@ let labels_names =['Label 1','Label 2','Label 3','Label 4','Label 5','Label 6','
 let selected_label = labels_names[0]
 let selected_label_index = 0
 let inp_rename_value = ''
-// The variable 'add_delete' can be 'select', 'add', 'delete', 'set_origin', 'delete_origin', 'set_scale', 'delete_scale' or 'drag'
+// The variable 'add_delete' can be 'select', 'add', 'delete', 'set_origin', 'delete_origin', 'set_scale' or 'delete_scale'
 let add_delete = 'add'
 // The variable 'change' gives the possibility to change an 'add_delete' value or not
 let change = 0
 let points_number = 0
 let id_ = 1
 let selected_point = 0
-let size_point = 1
+let size_point = 2.5
 let json_export = {};
 let json_import;
 let inp_export_name = ''
@@ -48,6 +48,7 @@ let n;
 let userAgent = navigator.userAgent;
 let browserName;
 let size_window = true;
+let count_lock = 0;
 
 /**
  * Function to set up every element on the screen and the datetime
@@ -160,7 +161,7 @@ function setup() {
   }
   inp_distance.input(myInputDistance);
 
-  slider_size_point = createSlider(0.5, 5, 1,0.5);
+  slider_size_point = createSlider(0.5, 5, 2.5,0.5);
   if (browserName == 'safari'){
     slider_size_point.position((windowWidth/3)+96, 137);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
@@ -246,7 +247,7 @@ function button_export_pressed() {
       points_meters.push({date: points[i].date, id_: points[i].id_, type: points[i].type, x:(points[i].x-o_x)*ratio_p_m, y:(points[i].y-o_y)*ratio_p_m, imgW:points[i].imgW, imgH:points[i].imgH, color:points[i].color, label:points[i].label, direction:points[i].direction})
     }
     // Information for information recovery
-    points_meters.push({labels_number:labels_number,labels_names:labels_names,selected_label:selected_label,selected_label_index:selected_label_index,add_delete:add_delete,change:change,points_number:points_number,id_:id_,selected_point:selected_point,origin_number:origin_number, scale_number:scale_number, o_x:o_x, o_y:o_y, s_x:s_x, s_y:s_y, ratio_p_m:ratio_p_m, parts:parts, wheel_part:wheel_part})
+    points_meters.push({labels_number:labels_number,labels_names:labels_names,selected_label:selected_label,selected_label_index:selected_label_index,add_delete:add_delete,change:change,points_number:points_number,id_:id_,selected_point:selected_point,origin_number:origin_number, scale_number:scale_number, o_x:o_x, o_y:o_y, s_x:s_x, s_y:s_y, ratio_p_m:ratio_p_m, inp_distance_value:inp_distance_value, parts:parts, wheel_part:wheel_part, size_point:size_point})
     // Save
     if (str(inp_export_name) == ''){
       saveJSON(points_meters,str(now)+'.json');
@@ -401,7 +402,7 @@ function mouseClicked() {
 
   let c = colors[selected_label_index]
   // ... if mouse is in the drawing area
-  if (mouseY > 165 && mouseX < (windowWidth-140)){
+  if (mouseY > 165 && mouseX < img_final_x){
     // ... for points addition
     if (add_delete == 'add'){
       now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
@@ -502,10 +503,8 @@ function mouseClicked() {
 } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
       add_delete = 'select'
   // ... if mouse is on the 'move' text
-} else if ((mouseX > (windowWidth/3)+166) && (mouseX < (windowWidth/3)+203) && (mouseY > 15) && (mouseY < 30)){
-      add_delete = 'drag'
+} else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
   // ... if mouse is on the 'set origin' text
-  } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
       add_delete = 'set_origin'
   // ... if mouse is on the 'delete origin' text
   } else if ((mouseX > (windowWidth/3)+89) && (mouseX < (windowWidth/3)+173) && (mouseY > 45) && (mouseY < 60)){
@@ -647,7 +646,7 @@ function find_circle_part(x,y){
  * @function
  */
 function closest() {
-  if (add_delete == 'delete' || add_delete == 'select' || add_delete == 'drag'){
+  if (add_delete == 'delete' || add_delete == 'select'){
     let x = mouseX
     let y = mouseY
     let best;
@@ -762,7 +761,6 @@ function drawpoint(pt) {
  * @param {object} file - The image file to create the map
  */
 function handleFile_Image(file) {
-  console.log(typeof(file));
   if (file.type === 'image') {
     img = createImg(file.data,'');
     img.hide();
@@ -796,6 +794,13 @@ function handleFile_Import(file) {
       selected_point = int(save_last.selected_point)
       origin_number = int(save_last.origin_number)
       scale_number = int(save_last.scale_number)
+      size_point = int(save_last.size_point)
+      inp_distance.value(float(save_last.inp_distance_value));
+      parts = int(save_last.parts)
+      wheel_part = int(save_last.wheel_part)
+      slider_size_point.remove();
+      slider_size_point = createSlider(0.5, 5, size_point,0.5);
+      slider_size_point.style('width','70px')
       let o_x = float(save_last.o_x);
       let o_y = float(save_last.o_y);
       let s_x = float(save_last.s_x);
@@ -823,8 +828,6 @@ function mouseMoved() {
   } else if((mouseX > (windowWidth/3)+52) && (mouseX < (windowWidth/3)+95) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
   } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
-    cursor(HAND);
-  } else if ((mouseX > (windowWidth/3)+166) && (mouseX < (windowWidth/3)+203) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
   } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
     cursor(HAND);
@@ -900,8 +903,29 @@ function mouseMoved() {
  * @function
  */
 function mouseDragged() {
-  if (add_delete == 'drag' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y){
+  count_lock += 1
+  if (add_delete == 'select' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y && count_lock > 5){
     drag_closest();
+  }
+}
+
+/**
+ * Function to detect if the mouse is released
+ * @function
+ */
+function mouseReleased() {
+  count_lock = 0
+}
+
+/**
+ * Function to detect if the mouse is pressed
+ * @function
+ */
+function mousePressed(){
+  for (let i = 0; i < points_number; i++){
+    if (points[i].type == 'selected' && mouseX < img_final_x && mouseY > 165){
+      points[i].type = 'normal'
+    }
   }
 }
 
@@ -1241,15 +1265,6 @@ function draw() {
   } else {
     fill(0, 0, 0);
     text('Update', (windowWidth/3)+106, 30);
-  }
-  fill(0, 0, 0);
-  text('|', (windowWidth/3)+159, 30);
-  if (add_delete == 'drag'){
-    fill(153, 153, 0);
-    text('Move', (windowWidth/3)+166, 30);
-  } else {
-    fill(0, 0, 0);
-    text('Move', (windowWidth/3)+166, 30);
   }
   if (add_delete == 'set_origin'){
     fill(255, 0, 255);
