@@ -1019,7 +1019,6 @@ function missing_alert() {
   } else {
     missing[1] = 'yes'
   }
-  console.log(inp_distance_value);
   if (inp_distance_value != undefined && inp_distance_value != ''){
     if (!isNaN(inp_distance_value)){
       missing[2] = 'no'
