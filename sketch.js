@@ -796,6 +796,7 @@ function handleFile_Import(file) {
       scale_number = int(save_last.scale_number)
       size_point = int(save_last.size_point)
       inp_distance.value(float(save_last.inp_distance_value));
+      inp_distance_value = float(save_last.inp_distance_value)
       parts = int(save_last.parts)
       wheel_part = int(save_last.wheel_part)
       slider_size_point.remove();
@@ -1018,6 +1019,7 @@ function missing_alert() {
   } else {
     missing[1] = 'yes'
   }
+  console.log(inp_distance_value);
   if (inp_distance_value != undefined && inp_distance_value != ''){
     if (!isNaN(inp_distance_value)){
       missing[2] = 'no'
