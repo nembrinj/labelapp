@@ -20,7 +20,7 @@ let labels_names =['Label 1','Label 2','Label 3','Label 4','Label 5','Label 6','
 let selected_label = labels_names[0]
 let selected_label_index = 0
 let inp_rename_value = ''
-// The variable 'add_delete' can be 'select', 'add', 'delete', 'set_origin', 'delete_origin', 'set_scale' or 'delete_scale'
+// The variable 'add_delete' can be 'select', 'add', 'delete', 'set_origin', 'delete_origin', 'set_scale', 'delete_scale' or 'null' (null is the state after an alert or confirm pop-up window is closed, since it doesn't catch the "mouseReleased" and think the mouse is dragged.)
 let add_delete = 'add'
 // The variable 'change' gives the possibility to change an 'add_delete' value or not
 let change = 0
@@ -204,6 +204,7 @@ function find_browser(){
   } else {
     browserName = 'No browser detected'
     alert('Your browser is not detected. It will be interpreted as Chrome.');
+    add_delete = 'null'
   }
 }
 
@@ -218,6 +219,7 @@ function button_now_pressed() {
       points[i].date = now
     }
   }
+  add_delete = 'null'
 }
 
 /**
@@ -256,6 +258,7 @@ function button_export_pressed() {
     }
   } else {
     alert('You cannot export your data now. \n\nFor more details, see the error written below the \"Export data\" button.')
+    add_delete = 'null'
   }
 }
 
@@ -292,6 +295,7 @@ function button_minus_pressed() {
     if (confirm("There are points drawn with the label \""+str(labels_names[labels_number-1])+"\". \n\nBy clicking on \"ok\", you will delete all your points with this label.")){
       decrease_labels_number();
     }
+    add_delete = 'null'
   } else {
     decrease_labels_number();
   }
@@ -703,6 +707,7 @@ function button_delete_all_pressed() {
     origin_number = 0
     scale_number = 0
   }
+  add_delete = 'null'
 }
 
 /**
@@ -766,6 +771,7 @@ function handleFile_Image(file) {
     img.hide();
   } else {
     alert('Something went wrong. \nThe chosen file type was \"'+str(file.type)+'\".\n\nYou need to add an image type file.');
+    add_delete = 'null'
   }
 }
 
@@ -781,6 +787,7 @@ function handleFile_Import(file) {
     // Check the first saved variable and the x value of the first saved point to determine if the file content seems to be fine.
     if (isNaN(save_last.labels_number)|isNaN(file_data[0].x)){
       alert('Something went wrong. \nThe file content does not correspond to the content needed. \n\nPlease check your file and try again.');
+      add_delete = 'null'
     } else {
       file_data.pop();
       points = file_data
@@ -815,6 +822,7 @@ function handleFile_Import(file) {
     }
   } else {
     alert('Something went wrong. \nThe chosen file type was \"'+str(file.type)+'"\.\n\nYou need to add an application type file.');
+    add_delete = 'null'
   }
 }
 
@@ -1164,6 +1172,13 @@ function draw() {
     image(img, 0, 165, img_final_x, img_final_y);
   }
 
+  if (add_delete == 'null'){
+    for (let i = 0; i < points_number; i++){
+      if (points[i].type == 'selected'){
+        points[i].type = 'normal'
+      }
+    }
+  }
   // Draws points
   points.forEach(drawpoint);
 
@@ -1338,11 +1353,13 @@ function draw() {
       if (windowWidth < 860 || windowHeight < (295+labels_number*20)){
         alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
         size_window = false
+        add_delete = 'null'
       }
     } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
       if (windowWidth < 885 || windowHeight < (295+labels_number*20)){
         alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
         size_window = false
+        add_delete = 'null'
       }
     }
   }
