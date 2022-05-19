@@ -73,13 +73,13 @@ function setup() {
 
   createCanvas(windowWidth, windowHeight);
 
-  button_now = createButton('Reset all points date to now');
+  button_now = createButton('Reset all dates & times to current values');
   if (browserName == 'safari'){
-    button_now.size(163,20);
+    button_now.size(228,20);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera'){
-    button_now.size(180,20);
+    button_now.size(255,20);
   } else if (browserName == 'firefox' || browserName == 'No browser detected'){
-    button_now.size(195,20);
+    button_now.size(270,20);
   }
   button_now.position(15, 135);
   button_now.mousePressed(button_now_pressed);
