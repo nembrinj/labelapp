@@ -79,7 +79,7 @@ function setup() {
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera'){
     button_now.size(255,20);
   } else if (browserName == 'firefox' || browserName == 'No browser detected'){
-    button_now.size(270,20);
+    button_now.size(267,20);
   }
   button_now.position(15, 135);
   button_now.mousePressed(button_now_pressed);
