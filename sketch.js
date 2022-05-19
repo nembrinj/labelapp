@@ -64,7 +64,7 @@ function setup() {
   if (browserName != 'firefox'){
     input_Image.position(115, 15);
   } else {
-    input_Image.position(125, 15);
+    input_Image.position(124, 15);
   }
   if (browserName == 'safari'){
     // To reduce the button size (standard is to long, with file name)
@@ -101,7 +101,7 @@ function setup() {
   if (browserName != 'firefox'){
     inp_export.position(170, 74);
   } else {
-    inp_export.position(180, 74);
+    inp_export.position(179, 74);
   }
   inp_export.size(100);
   inp_export.input(myInputExport);
@@ -110,7 +110,7 @@ function setup() {
   if (browserName != 'firefox'){
     input_Import.position(115, 45);
   } else {
-    input_Import.position(125, 45);
+    input_Import.position(124, 45);
   }
   if (browserName == 'safari'){
     input_Import.size(100);
@@ -1235,7 +1235,7 @@ function draw() {
   if (browserName != 'firefox'){
     text('Name :', 115, 90);
   } else {
-    text('Name :', 125, 90);
+    text('Name :', 124, 90);
   }
   // Adds warning if needed
   missing_alert();
