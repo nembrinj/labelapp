@@ -61,7 +61,11 @@ function setup() {
   now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
 
   input_Image = createFileInput(handleFile_Image);
-  input_Image.position(115, 15);
+  if (browserName != 'firefox'){
+    input_Image.position(115, 15);
+  } else {
+    input_Image.position(125, 15);
+  }
   if (browserName == 'safari'){
     // To reduce the button size (standard is to long, with file name)
     input_Image.size(100);
@@ -94,12 +98,20 @@ function setup() {
   button_export.mousePressed(button_export_pressed);
 
   let inp_export = createInput('');
-  inp_export.position(170, 74);
+  if (browserName != 'firefox'){
+    inp_export.position(170, 74);
+  } else {
+    inp_export.position(180, 74);
+  }
   inp_export.size(100);
   inp_export.input(myInputExport);
 
   input_Import = createFileInput(handleFile_Import);
-  input_Import.position(115, 45);
+  if (browserName != 'firefox'){
+    input_Import.position(115, 45);
+  } else {
+    input_Import.position(125, 45);
+  }
   if (browserName == 'safari'){
     input_Import.size(100);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
@@ -1220,7 +1232,11 @@ function draw() {
   fill(0, 0, 0);
   text('Import data :', 15, 60);
   fill(0, 0, 0);
-  text('Name :', 115, 90);
+  if (browserName != 'firefox'){
+    text('Name :', 115, 90);
+  } else {
+    text('Name :', 125, 90);
+  }
   // Adds warning if needed
   missing_alert();
   fill(0, 0, 0);
