@@ -357,6 +357,7 @@ function button_minus_wheel_pressed() {
  * @function
  */
 function button_rename_pressed() {
+  inp_rename.remove();
   labels_names[selected_label_index] = inp_rename_value
   inp_rename = createInput('');
   inp_rename.position((windowWidth/3)*2+136, 73);
@@ -927,6 +928,81 @@ function mouseDragged() {
   count_lock += 1
   if (add_delete == 'select' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y && count_lock > 5){
     drag_closest();
+  }
+  // Due to the integration of "Move" inside "Update", we need to have the cursor test here too.
+  // ... for the hand select options
+  if((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+41) && (mouseY > 15) && (mouseY < 30)){
+    cursor(HAND);
+  } else if((mouseX > (windowWidth/3)+52) && (mouseX < (windowWidth/3)+95) && (mouseY > 15) && (mouseY < 30)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+89) && (mouseX < (windowWidth/3)+173) && (mouseY > 45) && (mouseY < 60)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+114) && (mouseY > 75) && (mouseY < 90)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+125) && (mouseX < (windowWidth/3)+245) && (mouseY > 75) && (mouseY < 90)){
+    cursor(HAND);
+  } else {
+    cursor(ARROW);
+  }
+  // ... for the hand to select labels
+  textSize(text_size);
+  for (let i = 0; i < labels_number; i++){
+    if ((mouseX > windowWidth-140) && (mouseX < windowWidth) && (mouseY > 166+(text_size*2)*(i+1.25)) && (mouseY < 164+(text_size*2)*(i+2.25))){
+      cursor(HAND);
+    }
+  }
+  // ... for the hand to select a part of the wheel
+  if (check_if_in_circle(mouseX,mouseY)){
+    angleMode(DEGREES);
+    atan_i = atan((windowHeight-60-mouseY)/(windowWidth-70-mouseX))
+    if (parts%2 == 0){
+      n = parts/2+1
+      if (atan_i == -90){
+        cursor(HAND);
+      }
+      if (atan_i == 90){
+        cursor(HAND);
+      }
+      for (let i = 0; i < n; i++){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
+            cursor(HAND);
+          }
+        } else if (i == n-1){
+          if (atan_i > -89.99+i*angle-angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
+            cursor(HAND);
+          }
+        }
+      }
+    } else {
+      n = int(parts/2)+1
+      if (atan_i == 90){
+        cursor(HAND);
+      }
+      for (let i = 0; i < n; i++){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
+            cursor(HAND);
+          }
+        } else if (i == n-1){
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
+            cursor(HAND);
+          }
+        }
+      }
+    }
   }
 }
 
