@@ -357,6 +357,7 @@ function button_minus_wheel_pressed() {
  * @function
  */
 function button_rename_pressed() {
+  inp_rename.remove();
   labels_names[selected_label_index] = inp_rename_value
   inp_rename = createInput('');
   inp_rename.position((windowWidth/3)*2+136, 73);
