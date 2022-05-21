@@ -1040,9 +1040,11 @@ function drag_closest(){
   for (let i = 0; i < points_number; i++){
     if (points[i].type == 'selected'){
       points[i].type = 'normal'
-    } else if (points[i].type == 'selected_origin'){
+    } 
+    if (points[i].type == 'selected_origin'){
       points[i].type = 'origin'
-    } else if (points[i].type == 'selected_scale'){
+    }
+    if (points[i].type == 'selected_scale'){
       points[i].type = 'scale'
     }
   closest();
