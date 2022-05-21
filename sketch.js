@@ -929,6 +929,12 @@ function mouseDragged() {
   if (add_delete == 'select' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y && count_lock > 5){
     drag_closest();
   }
+  if (add_delete == 'selected_origin' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y && count_lock > 5){
+    drag_closest();
+  }
+  if (add_delete == 'selected_scale' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y && count_lock > 5){
+    drag_closest();
+  }
   // Due to the integration of "Move" inside "Update", we need to have the cursor test here too.
   // ... for the hand select options
   if((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+41) && (mouseY > 15) && (mouseY < 30)){
@@ -1031,12 +1037,33 @@ function mousePressed(){
  * @function
  */
 function drag_closest(){
+  for (let i = 0; i < points_number; i++){
+    if (points[i].type == 'selected'){
+      points[i].type = 'normal'
+    }
+    if (points[i].type == 'selected_origin'){
+      points[i].type = 'origin'
+    }
+    if (points[i].type == 'selected_scale'){
+      points[i].type = 'scale'
+    }
+  }
   closest();
   for (let i = 0; i < points_number; i++){
     if (points[i].type == 'selected'){
       points[i].x = mouseX*points[i].imgW/img_final_x
       points[i].y = (mouseY-165)*points[i].imgH/img_final_y
       points[i].type = 'normal'
+    }
+    if (points[i].type == 'selected_origin'){
+      points[i].x = mouseX*points[i].imgW/img_final_x
+      points[i].y = (mouseY-165)*points[i].imgH/img_final_y
+      points[i].type = 'origin'
+    }
+    if (points[i].type == 'selected_scale'){
+      points[i].x = mouseX*points[i].imgW/img_final_x
+      points[i].y = (mouseY-165)*points[i].imgH/img_final_y
+      points[i].type = 'scale'
     }
   }
 }
