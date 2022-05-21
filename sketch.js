@@ -20,14 +20,14 @@ let labels_names =['Label 1','Label 2','Label 3','Label 4','Label 5','Label 6','
 let selected_label = labels_names[0]
 let selected_label_index = 0
 let inp_rename_value = ''
-// The variable 'add_delete' can be 'select', 'add', 'delete', 'set_origin', 'delete_origin', 'set_scale', 'delete_scale' or 'drag'
+// The variable 'add_delete' can be 'select', 'add', 'delete', 'set_origin', 'delete_origin', 'set_scale', 'delete_scale' or 'null' (null is the state after an alert or confirm pop-up window is closed, since it doesn't catch the "mouseReleased" and think the mouse is dragged.)
 let add_delete = 'add'
 // The variable 'change' gives the possibility to change an 'add_delete' value or not
 let change = 0
 let points_number = 0
 let id_ = 1
 let selected_point = 0
-let size_point = 1
+let size_point = 2.5
 let json_export = {};
 let json_import;
 let inp_export_name = ''
@@ -48,6 +48,7 @@ let n;
 let userAgent = navigator.userAgent;
 let browserName;
 let size_window = true;
+let count_lock = 0;
 
 /**
  * Function to set up every element on the screen and the datetime
@@ -60,7 +61,11 @@ function setup() {
   now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
 
   input_Image = createFileInput(handleFile_Image);
-  input_Image.position(115, 15);
+  if (browserName != 'firefox'){
+    input_Image.position(115, 15);
+  } else {
+    input_Image.position(125, 15);
+  }
   if (browserName == 'safari'){
     // To reduce the button size (standard is to long, with file name)
     input_Image.size(100);
@@ -72,13 +77,13 @@ function setup() {
 
   createCanvas(windowWidth, windowHeight);
 
-  button_now = createButton('Reset all points date to now');
+  button_now = createButton('Reset all dates & times to current values');
   if (browserName == 'safari'){
-    button_now.size(163,20);
+    button_now.size(228,20);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera'){
-    button_now.size(180,20);
+    button_now.size(255,20);
   } else if (browserName == 'firefox' || browserName == 'No browser detected'){
-    button_now.size(195,20);
+    button_now.size(265,20);
   }
   button_now.position(15, 135);
   button_now.mousePressed(button_now_pressed);
@@ -93,12 +98,20 @@ function setup() {
   button_export.mousePressed(button_export_pressed);
 
   let inp_export = createInput('');
-  inp_export.position(170, 74);
+  if (browserName != 'firefox'){
+    inp_export.position(170, 74);
+  } else {
+    inp_export.position(180, 74);
+  }
   inp_export.size(100);
   inp_export.input(myInputExport);
 
   input_Import = createFileInput(handleFile_Import);
-  input_Import.position(115, 45);
+  if (browserName != 'firefox'){
+    input_Import.position(115, 45);
+  } else {
+    input_Import.position(125, 45);
+  }
   if (browserName == 'safari'){
     input_Import.size(100);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
@@ -160,7 +173,7 @@ function setup() {
   }
   inp_distance.input(myInputDistance);
 
-  slider_size_point = createSlider(0.5, 5, 1,0.5);
+  slider_size_point = createSlider(0.5, 5, 2.5,0.5);
   if (browserName == 'safari'){
     slider_size_point.position((windowWidth/3)+96, 137);
   } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'No browser detected'){
@@ -203,6 +216,7 @@ function find_browser(){
   } else {
     browserName = 'No browser detected'
     alert('Your browser is not detected. It will be interpreted as Chrome.');
+    add_delete = 'null'
   }
 }
 
@@ -217,6 +231,7 @@ function button_now_pressed() {
       points[i].date = now
     }
   }
+  add_delete = 'null'
 }
 
 /**
@@ -246,7 +261,7 @@ function button_export_pressed() {
       points_meters.push({date: points[i].date, id_: points[i].id_, type: points[i].type, x:(points[i].x-o_x)*ratio_p_m, y:(points[i].y-o_y)*ratio_p_m, imgW:points[i].imgW, imgH:points[i].imgH, color:points[i].color, label:points[i].label, direction:points[i].direction})
     }
     // Information for information recovery
-    points_meters.push({labels_number:labels_number,labels_names:labels_names,selected_label:selected_label,selected_label_index:selected_label_index,add_delete:add_delete,change:change,points_number:points_number,id_:id_,selected_point:selected_point,origin_number:origin_number, scale_number:scale_number, o_x:o_x, o_y:o_y, s_x:s_x, s_y:s_y, ratio_p_m:ratio_p_m, parts:parts, wheel_part:wheel_part})
+    points_meters.push({labels_number:labels_number,labels_names:labels_names,selected_label:selected_label,selected_label_index:selected_label_index,add_delete:add_delete,change:change,points_number:points_number,id_:id_,selected_point:selected_point,origin_number:origin_number, scale_number:scale_number, o_x:o_x, o_y:o_y, s_x:s_x, s_y:s_y, ratio_p_m:ratio_p_m, inp_distance_value:inp_distance_value, parts:parts, wheel_part:wheel_part, size_point:size_point})
     // Save
     if (str(inp_export_name) == ''){
       saveJSON(points_meters,str(now)+'.json');
@@ -255,6 +270,7 @@ function button_export_pressed() {
     }
   } else {
     alert('You cannot export your data now. \n\nFor more details, see the error written below the \"Export data\" button.')
+    add_delete = 'null'
   }
 }
 
@@ -291,6 +307,7 @@ function button_minus_pressed() {
     if (confirm("There are points drawn with the label \""+str(labels_names[labels_number-1])+"\". \n\nBy clicking on \"ok\", you will delete all your points with this label.")){
       decrease_labels_number();
     }
+    add_delete = 'null'
   } else {
     decrease_labels_number();
   }
@@ -401,7 +418,7 @@ function mouseClicked() {
 
   let c = colors[selected_label_index]
   // ... if mouse is in the drawing area
-  if (mouseY > 165 && mouseX < (windowWidth-140)){
+  if (mouseY > 165 && mouseX < img_final_x){
     // ... for points addition
     if (add_delete == 'add'){
       now = str(year())+'-'+str(month())+'-'+str(day())+' '+str(hour())+':'+str(minute())+':'+str(second())
@@ -502,10 +519,8 @@ function mouseClicked() {
 } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
       add_delete = 'select'
   // ... if mouse is on the 'move' text
-} else if ((mouseX > (windowWidth/3)+166) && (mouseX < (windowWidth/3)+203) && (mouseY > 15) && (mouseY < 30)){
-      add_delete = 'drag'
+} else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
   // ... if mouse is on the 'set origin' text
-  } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
       add_delete = 'set_origin'
   // ... if mouse is on the 'delete origin' text
   } else if ((mouseX > (windowWidth/3)+89) && (mouseX < (windowWidth/3)+173) && (mouseY > 45) && (mouseY < 60)){
@@ -647,7 +662,7 @@ function find_circle_part(x,y){
  * @function
  */
 function closest() {
-  if (add_delete == 'delete' || add_delete == 'select' || add_delete == 'drag'){
+  if (add_delete == 'delete' || add_delete == 'select'){
     let x = mouseX
     let y = mouseY
     let best;
@@ -704,6 +719,7 @@ function button_delete_all_pressed() {
     origin_number = 0
     scale_number = 0
   }
+  add_delete = 'null'
 }
 
 /**
@@ -762,12 +778,12 @@ function drawpoint(pt) {
  * @param {object} file - The image file to create the map
  */
 function handleFile_Image(file) {
-  console.log(typeof(file));
   if (file.type === 'image') {
     img = createImg(file.data,'');
     img.hide();
   } else {
     alert('Something went wrong. \nThe chosen file type was \"'+str(file.type)+'\".\n\nYou need to add an image type file.');
+    add_delete = 'null'
   }
 }
 
@@ -783,6 +799,7 @@ function handleFile_Import(file) {
     // Check the first saved variable and the x value of the first saved point to determine if the file content seems to be fine.
     if (isNaN(save_last.labels_number)|isNaN(file_data[0].x)){
       alert('Something went wrong. \nThe file content does not correspond to the content needed. \n\nPlease check your file and try again.');
+      add_delete = 'null'
     } else {
       file_data.pop();
       points = file_data
@@ -796,6 +813,14 @@ function handleFile_Import(file) {
       selected_point = int(save_last.selected_point)
       origin_number = int(save_last.origin_number)
       scale_number = int(save_last.scale_number)
+      size_point = int(save_last.size_point)
+      inp_distance.value(float(save_last.inp_distance_value));
+      inp_distance_value = float(save_last.inp_distance_value)
+      parts = int(save_last.parts)
+      wheel_part = int(save_last.wheel_part)
+      slider_size_point.remove();
+      slider_size_point = createSlider(0.5, 5, size_point,0.5);
+      slider_size_point.style('width','70px')
       let o_x = float(save_last.o_x);
       let o_y = float(save_last.o_y);
       let s_x = float(save_last.s_x);
@@ -809,6 +834,7 @@ function handleFile_Import(file) {
     }
   } else {
     alert('Something went wrong. \nThe chosen file type was \"'+str(file.type)+'"\.\n\nYou need to add an application type file.');
+    add_delete = 'null'
   }
 }
 
@@ -823,8 +849,6 @@ function mouseMoved() {
   } else if((mouseX > (windowWidth/3)+52) && (mouseX < (windowWidth/3)+95) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
   } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
-    cursor(HAND);
-  } else if ((mouseX > (windowWidth/3)+166) && (mouseX < (windowWidth/3)+203) && (mouseY > 15) && (mouseY < 30)){
     cursor(HAND);
   } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
     cursor(HAND);
@@ -900,8 +924,104 @@ function mouseMoved() {
  * @function
  */
 function mouseDragged() {
-  if (add_delete == 'drag' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y){
+  count_lock += 1
+  if (add_delete == 'select' && mouseX < img_final_x && mouseX > 0 && mouseY > 165 && mouseY < 165+img_final_y && count_lock > 5){
     drag_closest();
+  }
+  // Due to the integration of "Move" inside "Update", we need to have the cursor test here too.
+  // ... for the hand select options
+  if((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+41) && (mouseY > 15) && (mouseY < 30)){
+    cursor(HAND);
+  } else if((mouseX > (windowWidth/3)+52) && (mouseX < (windowWidth/3)+95) && (mouseY > 15) && (mouseY < 30)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+106) && (mouseX < (windowWidth/3)+155) && (mouseY > 15) && (mouseY < 30)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+78) && (mouseY > 45) && (mouseY < 60)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+89) && (mouseX < (windowWidth/3)+173) && (mouseY > 45) && (mouseY < 60)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+15) && (mouseX < (windowWidth/3)+114) && (mouseY > 75) && (mouseY < 90)){
+    cursor(HAND);
+  } else if ((mouseX > (windowWidth/3)+125) && (mouseX < (windowWidth/3)+245) && (mouseY > 75) && (mouseY < 90)){
+    cursor(HAND);
+  } else {
+    cursor(ARROW);
+  }
+  // ... for the hand to select labels
+  textSize(text_size);
+  for (let i = 0; i < labels_number; i++){
+    if ((mouseX > windowWidth-140) && (mouseX < windowWidth) && (mouseY > 166+(text_size*2)*(i+1.25)) && (mouseY < 164+(text_size*2)*(i+2.25))){
+      cursor(HAND);
+    }
+  }
+  // ... for the hand to select a part of the wheel
+  if (check_if_in_circle(mouseX,mouseY)){
+    angleMode(DEGREES);
+    atan_i = atan((windowHeight-60-mouseY)/(windowWidth-70-mouseX))
+    if (parts%2 == 0){
+      n = parts/2+1
+      if (atan_i == -90){
+        cursor(HAND);
+      }
+      if (atan_i == 90){
+        cursor(HAND);
+      }
+      for (let i = 0; i < n; i++){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
+            cursor(HAND);
+          }
+        } else if (i == n-1){
+          if (atan_i > -89.99+i*angle-angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
+            cursor(HAND);
+          }
+        }
+      }
+    } else {
+      n = int(parts/2)+1
+      if (atan_i == 90){
+        cursor(HAND);
+      }
+      for (let i = 0; i < n; i++){
+        if (i == 0){
+          if (atan_i > -89.99 && atan_i < -89.99+angle/2-0.02){
+            cursor(HAND);
+          }
+        } else if (i == n-1){
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < 89.99){
+            cursor(HAND);
+          }
+        } else {
+          if (atan_i > -89.99+(i-1)*angle+angle/2 && atan_i < -90.01+(i)*angle+angle/2){
+            cursor(HAND);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Function to detect if the mouse is released
+ * @function
+ */
+function mouseReleased() {
+  count_lock = 0
+}
+
+/**
+ * Function to detect if the mouse is pressed
+ * @function
+ */
+function mousePressed(){
+  for (let i = 0; i < points_number; i++){
+    if (points[i].type == 'selected' && mouseX < img_final_x && mouseY > 165){
+      points[i].type = 'normal'
+    }
   }
 }
 
@@ -1139,6 +1259,13 @@ function draw() {
     image(img, 0, 165, img_final_x, img_final_y);
   }
 
+  if (add_delete == 'null'){
+    for (let i = 0; i < points_number; i++){
+      if (points[i].type == 'selected'){
+        points[i].type = 'normal'
+      }
+    }
+  }
   // Draws points
   points.forEach(drawpoint);
 
@@ -1180,7 +1307,11 @@ function draw() {
   fill(0, 0, 0);
   text('Import data :', 15, 60);
   fill(0, 0, 0);
-  text('Name :', 115, 90);
+  if (browserName != 'firefox'){
+    text('Name :', 115, 90);
+  } else {
+    text('Name :', 125, 90);
+  }
   // Adds warning if needed
   missing_alert();
   fill(0, 0, 0);
@@ -1242,15 +1373,6 @@ function draw() {
     fill(0, 0, 0);
     text('Update', (windowWidth/3)+106, 30);
   }
-  fill(0, 0, 0);
-  text('|', (windowWidth/3)+159, 30);
-  if (add_delete == 'drag'){
-    fill(153, 153, 0);
-    text('Move', (windowWidth/3)+166, 30);
-  } else {
-    fill(0, 0, 0);
-    text('Move', (windowWidth/3)+166, 30);
-  }
   if (add_delete == 'set_origin'){
     fill(255, 0, 255);
     text('Set origin', (windowWidth/3)+15, 60);
@@ -1290,7 +1412,7 @@ function draw() {
   fill(0, 0, 0);
   text('Scale point distance (meters) :', (windowWidth/3)+15, 120);
   fill(0, 0, 0);
-  text('Size points ', (windowWidth/3)+15, 150);
+  text('Points size ', (windowWidth/3)+15, 150);
   // Adds label list display
   set_label_display_sizes();
   textSize(text_size);
@@ -1322,11 +1444,13 @@ function draw() {
       if (windowWidth < 860 || windowHeight < (295+labels_number*20)){
         alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
         size_window = false
+        add_delete = 'null'
       }
     } else if (browserName == 'chrome' || browserName == 'edge' || browserName == 'opera' || browserName == 'opera' || browserName == 'firefox' || browserName == 'No browser detected'){
       if (windowWidth < 885 || windowHeight < (295+labels_number*20)){
         alert('Your window seems to be too small for the app. \nDisplay can be affected or using the app can be difficult. \n\nIf possible, try to enlarge the window.');
         size_window = false
+        add_delete = 'null'
       }
     }
   }
