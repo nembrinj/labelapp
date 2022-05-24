@@ -866,6 +866,14 @@ function mouseMoved() {
       cursor('Cursors/Delete_Cursor.png');
     } else if (add_delete == 'select'){
       cursor('Cursors/Update_Cursor.png');
+    } else if (add_delete == 'set_origin'){
+      cursor('Cursors/Set_Origin_Cursor.png');
+    } else if (add_delete == 'delete_origin'){
+      cursor('Cursors/Delete_Origin_Cursor.png');
+    } else if (add_delete == 'set_scale'){
+      cursor('Cursors/Set_Scale_Cursor.png');
+    } else if (add_delete == 'delete_scale'){
+      cursor('Cursors/Delete_Scale_Cursor.png');
     } else {
       cursor('Cursors/Null_Cursor.png');
     }
@@ -966,6 +974,14 @@ function mouseDragged() {
       cursor('Cursors/Delete_Cursor.png');
     } else if (add_delete == 'select'){
       cursor('Cursors/Update_Cursor.png');
+    } else if (add_delete == 'set_origin'){
+      cursor('Cursors/Set_Origin_Cursor.png');
+    } else if (add_delete == 'delete_origin'){
+      cursor('Cursors/Delete_Origin_Cursor.png');
+    } else if (add_delete == 'set_scale'){
+      cursor('Cursors/Set_Scale_Cursor.png');
+    } else if (add_delete == 'delete_scale'){
+      cursor('Cursors/Delete_Scale_Cursor.png');
     } else {
       cursor('Cursors/Null_Cursor.png');
     }
