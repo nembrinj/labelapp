@@ -860,7 +860,15 @@ function mouseMoved() {
   } else if ((mouseX > (windowWidth/3)+125) && (mouseX < (windowWidth/3)+245) && (mouseY > 75) && (mouseY < 90)){
     cursor(HAND);
   } else {
-    cursor(ARROW);
+    if (add_delete == 'add'){
+      cursor('Cursors/Add_Cursor.png');
+    } else if (add_delete == 'delete'){
+      cursor('Cursors/Delete_Cursor.png');
+    } else if (add_delete == 'select'){
+      cursor('Cursors/Update_Cursor.png');
+    } else {
+      cursor('Cursors/Null_Cursor.png');
+    }
   }
   // ... to select labels
   textSize(text_size);
@@ -952,7 +960,15 @@ function mouseDragged() {
   } else if ((mouseX > (windowWidth/3)+125) && (mouseX < (windowWidth/3)+245) && (mouseY > 75) && (mouseY < 90)){
     cursor(HAND);
   } else {
-    cursor(ARROW);
+    if (add_delete == 'add'){
+      cursor('Cursors/Add_Cursor.png');
+    } else if (add_delete == 'delete'){
+      cursor('Cursors/Delete_Cursor.png');
+    } else if (add_delete == 'select'){
+      cursor('Cursors/Update_Cursor.png');
+    } else {
+      cursor('Cursors/Null_Cursor.png');
+    }
   }
   // ... for the hand to select labels
   textSize(text_size);
